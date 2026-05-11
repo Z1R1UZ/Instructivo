@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Instructivo Facturación</title>
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f0f4f9;
+            padding: 16px 12px 40px;
+        }
+        .app-container {
+            max-width: 1080px;
+            min-width: 680px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 36px;
+            box-shadow: 0 16px 32px rgba(0,0,0,0.06);
+            overflow: hidden;
+        }
+        .app-header {
+            background: linear-gradient(135deg, #0c6e8c, #0a4e6e);
+            padding: 22px 20px 16px;
+            color: white;
+        }
+        .app-header h1 { font-size: 1.55rem; font-weight: 600; display: flex; gap: 10px; align-items: center; }
+        .app-header p { font-size: 0.8rem; opacity: 0.85; margin-top: 6px; }
+        .tabs {
+            display: flex;
+            background: #fff;
+            border-bottom: 1px solid #e4edf2;
+            padding: 0 14px;
+            gap: 8px;
+        }
+        .tab-btn {
+            flex: 1;
+            background: none;
+            border: none;
+            padding: 14px 5px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            font-family: inherit;
+            color: #5c6f82;
+            cursor: pointer;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: 0.2s;
+        }
+        .tab-btn.active {
+            color: #0c6e8c;
+            background: #eef6fc;
+            border-bottom: 3px solid #0c6e8c;
+        }
+        .tab-content { padding: 22px 18px; background: #ffffff; }
+        .tab-pane { display: none; animation: fade 0.2s ease; }
+        .tab-pane.active-pane { display: block; }
+        @keyframes fade { from { opacity: 0; transform: translateY(5px);} to { opacity: 1; transform: translateY(0);} }
+
+        /* Búsqueda */
+        .search-box { margin-bottom: 20px; position: relative; }
+        .search-box i { position: absolute; left: 15px; top: 14px; color: #7e95a8; }
+        .search-box input {
+            width: 100%;
+            padding: 12px 12px 12px 42px;
+            border: 1px solid #cbdb e6;
+            border-radius: 48px;
+            font-size: 0.9rem;
+            background: #fefefe;
+        }
+        .search-box input:focus { border-color: #0c6e8c; outline: none; box-shadow: 0 0 0 2px rgba(12,110,140,0.2); }
+
+        /* carpetas empresas */
+        .carpetas-grid { display: flex; flex-direction: column; gap: 12px; }
+        .carpeta-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: #f9fbfd;
+            border-radius: 24px;
+            padding: 14px 18px;
+            border: 1px solid #e2edf2;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .carpeta-item:hover { background: #eff6fc; transform: scale(0.99); border-color: #bdd6e4; }
+        .carpeta-icon { background: #e5eff5; width: 52px; height: 52px; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: #0c6e8c; }
+        .carpeta-info h3 { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+        .carpeta-info p { font-size: 0.7rem; color: #658098; }
+
+        .subcarpeta-list { display: flex; flex-direction: column; gap: 10px; }
+        .subcarpeta-card {
+            background: white;
+            border-radius: 20px;
+            padding: 14px 18px;
+            border: 1px solid #e3ecf1;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            cursor: pointer;
+        }
+        .subcarpeta-card i:first-child { font-size: 1.4rem; color: #f3a333; }
+        .btn-volver {
+            background: #eef3f8;
+            border: none;
+            border-radius: 40px;
+            padding: 8px 18px;
+            font-weight: 500;
+            font-size: 0.75rem;
+            margin-bottom: 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+        .breadcrumb { font-size: 0.7rem; background: #f3f7fa; padding: 8px 14px; border-radius: 40px; margin-bottom: 18px; color: #2a5774; }
+        /* tabla archivos con estructura de nombramiento */
+        .archivos-tabla {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.75rem;
+        }
+        .archivos-tabla th, .archivos-tabla td {
+            padding: 12px 6px;
+            border-bottom: 1px solid #e9edf2;
+            text-align: left;
+            vertical-align: top;
+        }
+        .archivos-tabla th { font-weight: 700; color: #1f506a; background: #fafcff; text-align: center;}
+        .tablaASMS {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.75rem;
+            margin-top: 20px;
+        }
+        .tablaASMS th, .tablaASMS td {
+            padding: 12px 6px;
+            border-bottom: 1px solid #e9edf2;
+            text-align: left;
+            vertical-align: top;
+        }
+        .tablaASMS thead tr:first-child th { text-align: center; font-weight: 700; color: #1f506a; background: #fafcff; font-size: larger;}
+        .tablaASMS th { font-weight: 700; color: #1f506a; background: #fafcff; text-align: center; }
+
+        .badge-estructura { background: #eef2fa; border-radius: 30px; padding: 4px 10px; font-size: 0.7rem; font-family: monospace; display: inline-block; margin: 2px 0; }
+        /* Topes aseguradoras nuevos */
+        .topes-container { display: flex; flex-direction: column; gap: 28px; }
+        .year-card { background: #fefaf3; border-radius: 28px; padding: 18px; border: 1px solid #efe2cf; }
+        .year-title { font-size: 1.6rem; font-weight: 700; margin-bottom: 18px; border-left: 5px solid #0c6e8c; padding-left: 14px; display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+        .categoria-tope tr td { padding: 12px 5px; border-bottom: 1px dashed #e2d9cd; }
+        .flecha-grafico { width: 35px; text-align: center; font-size: 1.2rem; }
+        .uvt-valor { font-weight: 800; color: #1d5b78; text-align: center;}
+        .cop-valor { font-size: 0.75rem; color: #2a7f49; font-weight: 500; text-align: center;}
+        .note { background: #eff5f9; border-radius: 20px; padding: 10px; font-size: 0.7rem; text-align: center; margin-top: 16px; }
+        /* documentos grid */
+        .documentos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; }
+        .doc-card { background: #ffffff; border-radius: 24px; border: 1px solid #dde6ed; padding: 16px 12px; text-align: center; transition: 0.1s; }
+        .doc-nombre { font-weight: 700; color: #145c7a; margin-bottom: 8px; }
+        .doc-formato { background: #f2f6fa; border-radius: 30px; padding: 6px; font-family: monospace; font-size: 0.75rem; margin: 12px 0; }
+        .btn-info { background: #eef3fc; border: none; padding: 8px; border-radius: 28px; width: 100%; font-weight: 500; font-size: 0.7rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .cerrar-modal {margin-top: 10px;}
+        /* modal */
+        .modal-def { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 1000;}
+        .modal-content { background: white; max-width: 280px; padding: 24px; border-radius: 36px; text-align: center; }
+        .empty-message { text-align: center; color: #6e8c9e; padding: 30px; }
+        @media (max-width: 520px) { .tab-btn { font-size: 0.7rem; } .doc-card { padding: 10px; } }
+    </style>
+</head>
+<body>
+<div class="app-container">
+    <div class="app-header">
+        <h1><i class="fas fa-hand-holding-medical"></i> Instructivo Facturación</h1>
+        <p>Resolución 2284 de 2023 · Decreto 2644 de 2022 (Topes categorías) y Documentos de Identificación</p>
+    </div>
+    <div class="tabs">
+        <button class="tab-btn active" data-tab="entrega"><i class="fas fa-folder-tree"></i> Entrega info</button>
+        <button class="tab-btn" data-tab="topes"><i class="fas fa-car-crash"></i> Topes aseguradoras</button>
+        <button class="tab-btn" data-tab="documentos"><i class="fas fa-id-card"></i> Tipos documentación</button>
+    </div>
+    <div class="tab-content">
+        <!-- Pestaña Entrega de información -->
+        <div id="entrega-pane" class="tab-pane active-pane">
+            <div class="search-box"><i class="fas fa-search"></i><input type="text" id="buscadorEmpresas" placeholder="Buscar empresa por nombre..."></div>
+            <div id="breadcrumbContainer" class="breadcrumb"></div>
+            <div id="btnVolverWrapper"></div>
+            <div id="dynamicFolderView"></div>
+        </div>
+
+        <!-- Pestaña Topes aseguradoras (categorías vehículo) -->
+        <div id="topes-pane" class="tab-pane">
+            <div  style="margin-top:8px; margin-bottom: 8px ; text-align: center;"><i class="fas fa-chart-line"></i> Cobertura de gastos médicos por accidente de tránsito — Decreto 2644 de 2022.</div>
+            <div class="topes-container" id="topesContainer"></div>
+            <div class="note"> Una vez superados los topes, se procede a cobrar a la EPS o a ARL respectivamente</div>
+        </div>
+
+        <!-- Pestaña Tipos de documentación -->
+        <div id="documentos-pane" class="tab-pane">
+            <div class="documentos-grid" id="documentosGrid"></div>
+            <div>
+                <table class="tablaASMS">
+                    <thead>
+                        <tr><th colspan="4">Composición de Adultos sin Identificación y Menores sin Identificación</th></tr>
+                    </thead>                    
+                    <tr><th>Condición</th><th>Tipo documento</th><th>Composición</th><th>Longitud</th></tr>
+                    <tr>
+                        <td>Personas de la tercera edad en protección de ancianatos</td>
+                        <td>AS</td>
+                        <td>Código de departamento + código de municipio + S + consecutivo por afiliado</td>
+                        <td>10</td>
+                    </tr>
+                    <tr>
+                        <td>Indígenas mayores de edad</td>
+                        <td>AS</td>
+                        <td>Código de departamento + código de municipio + I + consecutivo por afiliado.</td>
+                        <td>10</td>
+                    </tr>
+                    <tr>
+                        <td>Habitantes de la calle mayores de edad</td>
+                        <td>AS</td>
+                        <td>Código de departamento + municipio + D + consecutivo por afiliado</td>
+                        <td>10</td>
+                    </tr>
+                    <tr>
+                        <td>Habitantes de la calle menores de edad</td>
+                        <td>MS</td>
+                        <td>Departamento + municipio + D + consecutivo por afiliado</td>
+                        <td>10</td>
+                    </tr>
+                    <tr>
+                        <td>Población infantil vulnerable bajo protección en instituciones diferentes al ICBF. Menores de edad a cargo del ICBF</td>
+                        <td>MS</td>
+                        <td>Código de departamento + código de municipio + A + consecutivo por afiliado</td>
+                        <td>10</td>
+                    </tr>
+                    <tr>
+                        <td>Indígenas menores de edad</td>
+                        <td>MS</td>
+                        <td>Código de departamento + código de municipio + I + consecutivo por afiliado</td>
+                        <td>12</td>
+                    </tr>
+                    <tr>
+                        <td>Menores de edad desmovilizados y/o que celebren acuerdos de paz con el Gobierno Nacional</td>
+                        <td>MS</td>
+                        <td>Departamento + municipio + P + consecutivo por afiliado</td>
+                        <td>10</td>
+                    </tr>
+                    <tr>
+                        <td>Mayores de edad desmovilizados y/o que celebren acuerdos de paz con el Gobierno Nacional</td>
+                        <td>AS</td>
+                        <td>Departamento + municipio + P + consecutivo por afiliado</td>
+                        <td>10</td>
+                    </tr>
+                    <tr>
+                        <td>Población privada de la libertad a cargo de las entidades territoriales.</td>
+                        <td>MS</td>
+                        <td>Número asignado por el Inpec. Para menores de tres (3) años que convivan con sus madres recluidos en los establecimientos a cargo del Inpec.</td>
+                        <td>6</td>
+                    </tr>
+                    <tr>
+                        <td>Población privada de la libertad a cargo de las entidades territoriales.</td>
+                        <td>AS</td>
+                        <td>Número asignado por el Inpec. Para internos recluidos en los establecimientos de reclusión a cargo del Inpec.</td>
+                        <td>6</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="modalDefinicion" class="modal-def"><div class="modal-content"><i class="fas fa-info-circle" style="font-size:2rem;color:#0c6e8c;"></i><p id="modalTextoDef" style="margin-top: 10px; text-align: left;"></p><button class="cerrar-modal" id="cerrarModalBtn">Cerrar</button></div></div>
+
+<script>
+    // --------------------------------------------------------------
+    // 1. DATOS EMPRESAS: algunas sin subcarpetas, archivos con estructura de nombramiento
+    // --------------------------------------------------------------
+    const empresasData = [        
+        {
+            id: 1, nombre: "SAVIA SALUD EPS",
+            subcarpetas:null,
+            archivosDirectos:[
+                {nombre:"FEV_900196346_ESEH99999.pdf",estructura: "FEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Representación gráfica de fáctura electrónica de venta"},
+                {nombre:"ADM_900196346_ESEH99999.pdf",estructura: "ADM_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Autorización y documentos"},
+                {nombre:"HTL_900196346_ESEH99999.pdf",estructura: "HTL_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de traslado"},
+                {nombre:"EPI_900196346_ESEH99999.pdf",estructura: "EPI_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Epicrisis"},
+                {nombre:"CRC_900196346_ESEH99999.pdf",estructura: "CRC_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Certificado de atención"},
+                {nombre:"DQX_900196346_ESEH99999.pdf",estructura: "DQX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Descripción quirurgica"},
+                {nombre:"HAM_900196346_ESEH99999.pdf",estructura: "HAM_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Registro de enfermería"},
+                {nombre:"HAU_900196346_ESEH99999.pdf",estructura: "HAU_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de atención de urgencias"},
+                {nombre:"HEV_900196346_ESEH99999.pdf",estructura: "HEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de evolución (Historia clínica)"},
+                {nombre:"OPF_900196346_ESEH99999.pdf",estructura: "OPF_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Orden de prescripción facultativa (ambulatorio)"},
+                {nombre:"PDX_900196346_ESEH99999.pdf",estructura: "PDX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Soportes de ayudas diagnósticas"},
+                {nombre:"RAN_900196346_ESEH99999.pdf",estructura: "RAN_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de antestesia"},
+                {nombre:"FMO_900196346_ESEH99999.pdf",estructura: "FMO_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Factura material de osteosintesis"}
+            ]
+        },
+        {
+            id: 2, nombre: "MUTUAL SER EPS",
+            subcarpetas: [
+                { nombre: "ESEH999999", archivos: [
+                    {nombre:"FVS_900196346_ESEH99999.pdf",estructura: "FEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Representación gráfica de fáctura electrónica de venta"},
+                    {nombre:"PDE_900196346_ESEH99999.pdf",estructura: "PDE_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Autorización y documentos"},
+                    {nombre:"TAP_900196346_ESEH99999.pdf",estructura: "HTL_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de traslado"},
+                    {nombre:"EPI_900196346_ESEH99999.pdf",estructura: "EPI_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Epicrisis"},
+                    {nombre:"CRC_900196346_ESEH99999.pdf",estructura: "CRC_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Certificado de atención"},
+                    {nombre:"DQX_900196346_ESEH99999.pdf",estructura: "DQX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Descripción quirurgica"},
+                    {nombre:"HAM_900196346_ESEH99999.pdf",estructura: "HAM_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Registro de enfermería"},
+                    {nombre:"HAU_900196346_ESEH99999.pdf",estructura: "HAU_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de atención de urgencias"},
+                    {nombre:"HEV_900196346_ESEH99999.pdf",estructura: "HEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de evolución (Historia clínica)"},
+                    {nombre:"OPF_900196346_ESEH99999.pdf",estructura: "OPF_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Orden de prescripción facultativa (ambulatorio)"},
+                    {nombre:"PDX_900196346_ESEH99999.pdf",estructura: "PDX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Soportes de ayudas diagnósticas"},
+                    {nombre:"RAN_900196346_ESEH99999.pdf",estructura: "RAN_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de antestesia"},
+                    {nombre:"FMO_900196346_ESEH99999.pdf",estructura: "FMO_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Factura material de osteosintesis"}
+                ] }
+            ]
+        },
+        {
+            id: 3, nombre: "SECRETARÍA DE SALUD DEPARTAMENTAL",
+            subcarpetas: [
+                { nombre: "ESEH999999", archivos: [
+                    {nombre:"FVS_900196346_ESEH99999.pdf",estructura: "FEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Representación gráfica de fáctura electrónica de venta"},
+                    {nombre:"PDE_900196346_ESEH99999.pdf",estructura: "PDE_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Autorización y documentos"},
+                    {nombre:"TAP_900196346_ESEH99999.pdf",estructura: "HTL_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de traslado"},
+                    {nombre:"EPI_900196346_ESEH99999.pdf",estructura: "EPI_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Epicrisis"},
+                    {nombre:"CRC_900196346_ESEH99999.pdf",estructura: "CRC_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Certificado de atención"},
+                    {nombre:"DQX_900196346_ESEH99999.pdf",estructura: "DQX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Descripción quirurgica"},
+                    {nombre:"HAM_900196346_ESEH99999.pdf",estructura: "HAM_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Registro de enfermería"},
+                    {nombre:"HAU_900196346_ESEH99999.pdf",estructura: "HAU_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de atención de urgencias"},
+                    {nombre:"HEV_900196346_ESEH99999.pdf",estructura: "HEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de evolución (Historia clínica)"},
+                    {nombre:"OPF_900196346_ESEH99999.pdf",estructura: "OPF_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Orden de prescripción facultativa (ambulatorio)"},
+                    {nombre:"PDX_900196346_ESEH99999.pdf",estructura: "PDX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Soportes de ayudas diagnósticas"},
+                    {nombre:"RAN_900196346_ESEH99999.pdf",estructura: "RAN_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de antestesia"},
+                    {nombre:"FMO_900196346_ESEH99999.pdf",estructura: "FMO_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Factura material de osteosintesis"}
+                ] }
+            ]
+        },
+        {
+            id: 4, nombre: "CAPITAL SALUD EPS",
+            subcarpetas: [
+                { nombre: "ESEH999999", archivos: [
+                    {nombre:"FEV_900196346_ESEH99999.pdf",estructura: "FEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Representación gráfica de fáctura electrónica de venta"},
+                    {nombre:"PDE_900196346_ESEH99999.pdf",estructura: "PDE_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Autorización y documentos"},
+                    {nombre:"TAP_900196346_ESEH99999.pdf",estructura: "HTL_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de traslado"},
+                    {nombre:"EPI_900196346_ESEH99999.pdf",estructura: "EPI_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Epicrisis"},
+                    {nombre:"CRC_900196346_ESEH99999.pdf",estructura: "CRC_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Certificado de atención"},
+                    {nombre:"DQX_900196346_ESEH99999.pdf",estructura: "DQX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Descripción quirurgica"},
+                    {nombre:"HAM_900196346_ESEH99999.pdf",estructura: "HAM_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Registro de enfermería"},
+                    {nombre:"HAU_900196346_ESEH99999.pdf",estructura: "HAU_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de atención de urgencias"},
+                    {nombre:"HEV_900196346_ESEH99999.pdf",estructura: "HEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de evolución (Historia clínica)"},
+                    {nombre:"OPF_900196346_ESEH99999.pdf",estructura: "OPF_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Orden de prescripción facultativa (ambulatorio)"},
+                    {nombre:"PDX_900196346_ESEH99999.pdf",estructura: "PDX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Soportes de ayudas diagnósticas"},
+                    {nombre:"RAN_900196346_ESEH99999.pdf",estructura: "RAN_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de antestesia"},
+                    {nombre:"FMO_900196346_ESEH99999.pdf",estructura: "FMO_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Factura material de osteosintesis"}
+                ] }
+            ]
+        },
+        {
+            id: 5, nombre: "FOMAG",
+            subcarpetas: [
+                { nombre: "ESEH999999", archivos: [
+                    {nombre:"FEV_900196346_ESEH99999.pdf",estructura: "FEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Representación gráfica de fáctura electrónica de venta"},
+                    {nombre:"PDE_900196346_ESEH99999.pdf",estructura: "PDE_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Autorización y documentos"},
+                    {nombre:"TAP_900196346_ESEH99999.pdf",estructura: "HTL_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de traslado"},
+                    {nombre:"EPI_900196346_ESEH99999.pdf",estructura: "EPI_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Epicrisis"},
+                    {nombre:"CRC_900196346_ESEH99999.pdf",estructura: "CRC_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Certificado de atención"},
+                    {nombre:"DQX_900196346_ESEH99999.pdf",estructura: "DQX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Descripción quirurgica"},
+                    {nombre:"HAM_900196346_ESEH99999.pdf",estructura: "HAM_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Registro de enfermería"},
+                    {nombre:"HAU_900196346_ESEH99999.pdf",estructura: "HAU_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de atención de urgencias"},
+                    {nombre:"HEV_900196346_ESEH99999.pdf",estructura: "HEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de evolución (Historia clínica)"},
+                    {nombre:"OPF_900196346_ESEH99999.pdf",estructura: "OPF_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Orden de prescripción facultativa (ambulatorio)"},
+                    {nombre:"PDX_900196346_ESEH99999.pdf",estructura: "PDX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Soportes de ayudas diagnósticas"},
+                    {nombre:"RAN_900196346_ESEH99999.pdf",estructura: "RAN_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de antestesia"},
+                    {nombre:"FMO_900196346_ESEH99999.pdf",estructura: "FMO_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Factura material de osteosintesis"}
+                ] }
+            ]
+        },
+        {
+            id: 6, nombre: "NUEVA EPS",
+            subcarpetas: [
+                { nombre: "ESEH999999", archivos: [
+                    {nombre:"FEV_900196346_ESEH99999.pdf",estructura: "FEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Representación gráfica de fáctura electrónica de venta"},
+                    {nombre:"PDE_900196346_ESEH99999.pdf",estructura: "PDE_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Autorización y documentos"},
+                    {nombre:"TAP_900196346_ESEH99999.pdf",estructura: "HTL_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de traslado"},
+                    {nombre:"EPI_900196346_ESEH99999.pdf",estructura: "EPI_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Epicrisis"},
+                    {nombre:"CRC_900196346_ESEH99999.pdf",estructura: "CRC_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Certificado de atención"},
+                    {nombre:"DQX_900196346_ESEH99999.pdf",estructura: "DQX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Descripción quirurgica"},
+                    {nombre:"HAM_900196346_ESEH99999.pdf",estructura: "HAM_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Registro de enfermería"},
+                    {nombre:"HAU_900196346_ESEH99999.pdf",estructura: "HAU_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de atención de urgencias"},
+                    {nombre:"HEV_900196346_ESEH99999.pdf",estructura: "HEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de evolución (Historia clínica)"},
+                    {nombre:"OPF_900196346_ESEH99999.pdf",estructura: "OPF_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Orden de prescripción facultativa (ambulatorio)"},
+                    {nombre:"PDX_900196346_ESEH99999.pdf",estructura: "PDX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Soportes de ayudas diagnósticas"},
+                    {nombre:"RAN_900196346_ESEH99999.pdf",estructura: "RAN_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de antestesia"},
+                    {nombre:"FMO_900196346_ESEH99999.pdf",estructura: "FMO_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Factura material de osteosintesis"}
+                ] }
+            ]
+        },
+        {
+            id: 7, nombre: "SERVICIO OCCIDENTAL DE SALUD S.O.S",
+            subcarpetas: [
+                { nombre: "ESEH999999", archivos: [
+                    {nombre:"FVS_900196346_ESEH99999.pdf",estructura: "FEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Representación gráfica de fáctura electrónica de venta"},
+                    {nombre:"PDE_900196346_ESEH99999.pdf",estructura: "PDE_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Autorización y documentos"},
+                    {nombre:"TAP_900196346_ESEH99999.pdf",estructura: "HTL_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de traslado"},
+                    {nombre:"EPI_900196346_ESEH99999.pdf",estructura: "EPI_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Epicrisis"},
+                    {nombre:"CRC_900196346_ESEH99999.pdf",estructura: "CRC_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Certificado de atención"},
+                    {nombre:"DQX_900196346_ESEH99999.pdf",estructura: "DQX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Descripción quirurgica"},
+                    {nombre:"HAM_900196346_ESEH99999.pdf",estructura: "HAM_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Registro de enfermería"},
+                    {nombre:"HAU_900196346_ESEH99999.pdf",estructura: "HAU_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de atención de urgencias"},
+                    {nombre:"HEV_900196346_ESEH99999.pdf",estructura: "HEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de evolución (Historia clínica)"},
+                    {nombre:"OPF_900196346_ESEH99999.pdf",estructura: "OPF_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Orden de prescripción facultativa (ambulatorio)"},
+                    {nombre:"PDX_900196346_ESEH99999.pdf",estructura: "PDX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Soportes de ayudas diagnósticas"},
+                    {nombre:"RAN_900196346_ESEH99999.pdf",estructura: "RAN_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de antestesia"},
+                    {nombre:"FMO_900196346_ESEH99999.pdf",estructura: "FMO_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Factura material de osteosintesis"}
+                ] }
+            ]
+        },
+        {
+            id: 8, nombre: "UNION TEMPORAL SALUD MAIZFEN",
+            subcarpetas: [
+                { nombre: "ESEH999999", archivos: [
+                    {nombre:"FEV_900196346_ESEH99999.pdf",estructura: "FEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Representación gráfica de fáctura electrónica de venta"},
+                    {nombre:"PDE_900196346_ESEH99999.pdf",estructura: "PDE_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Autorización y documentos"},
+                    {nombre:"TAP_900196346_ESEH99999.pdf",estructura: "HTL_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de traslado"},
+                    {nombre:"EPI_900196346_ESEH99999.pdf",estructura: "EPI_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Epicrisis"},
+                    {nombre:"CRC_900196346_ESEH99999.pdf",estructura: "CRC_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Certificado de atención"},
+                    {nombre:"DQX_900196346_ESEH99999.pdf",estructura: "DQX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Descripción quirurgica"},
+                    {nombre:"HAM_900196346_ESEH99999.pdf",estructura: "HAM_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Registro de enfermería"},
+                    {nombre:"HAU_900196346_ESEH99999.pdf",estructura: "HAU_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de atención de urgencias"},
+                    {nombre:"HEV_900196346_ESEH99999.pdf",estructura: "HEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de evolución (Historia clínica)"},
+                    {nombre:"OPF_900196346_ESEH99999.pdf",estructura: "OPF_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Orden de prescripción facultativa (ambulatorio)"},
+                    {nombre:"PDX_900196346_ESEH99999.pdf",estructura: "PDX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Soportes de ayudas diagnósticas"},
+                    {nombre:"RAN_900196346_ESEH99999.pdf",estructura: "RAN_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de antestesia"},
+                    {nombre:"FMO_900196346_ESEH99999.pdf",estructura: "FMO_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Factura material de osteosintesis"}
+                ] }
+            ]
+        },
+        {
+            id: 9, nombre: "ECOPETROL",
+            subcarpetas: [
+                { nombre: "ESEH999999", archivos: [
+                    {nombre:"FEV_900196346_ESEH99999.pdf",estructura: "FEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Representación gráfica de fáctura electrónica de venta"},
+                    {nombre:"PDE_900196346_ESEH99999.pdf",estructura: "PDE_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Autorización y documentos"},
+                    {nombre:"TAP_900196346_ESEH99999.pdf",estructura: "HTL_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de traslado"},
+                    {nombre:"EPI_900196346_ESEH99999.pdf",estructura: "EPI_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Epicrisis"},
+                    {nombre:"CRC_900196346_ESEH99999.pdf",estructura: "CRC_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Certificado de atención"},
+                    {nombre:"DQX_900196346_ESEH99999.pdf",estructura: "DQX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Descripción quirurgica"},
+                    {nombre:"HAM_900196346_ESEH99999.pdf",estructura: "HAM_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Registro de enfermería"},
+                    {nombre:"HAU_900196346_ESEH99999.pdf",estructura: "HAU_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de atención de urgencias"},
+                    {nombre:"HEV_900196346_ESEH99999.pdf",estructura: "HEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de evolución (Historia clínica)"},
+                    {nombre:"OPF_900196346_ESEH99999.pdf",estructura: "OPF_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Orden de prescripción facultativa (ambulatorio)"},
+                    {nombre:"PDX_900196346_ESEH99999.pdf",estructura: "PDX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Soportes de ayudas diagnósticas"},
+                    {nombre:"RAN_900196346_ESEH99999.pdf",estructura: "RAN_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de antestesia"},
+                    {nombre:"FMO_900196346_ESEH99999.pdf",estructura: "FMO_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Factura material de osteosintesis"}
+                ] }
+            ]
+        },
+        {
+            id: 10, nombre: "ESM BATALLON ALFONSO XEQUE",
+            subcarpetas: [
+                { nombre: "ESEH999999", archivos: [
+                    {nombre:"FEV_900196346_ESEH99999.pdf",estructura: "FEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Representación gráfica de fáctura electrónica de venta"},
+                    {nombre:"PDE_900196346_ESEH99999.pdf",estructura: "PDE_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Autorización y documentos"},
+                    {nombre:"TAP_900196346_ESEH99999.pdf",estructura: "HTL_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de traslado"},
+                    {nombre:"EPI_900196346_ESEH99999.pdf",estructura: "EPI_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Epicrisis"},
+                    {nombre:"CRC_900196346_ESEH99999.pdf",estructura: "CRC_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Certificado de atención"},
+                    {nombre:"DQX_900196346_ESEH99999.pdf",estructura: "DQX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Descripción quirurgica"},
+                    {nombre:"HAM_900196346_ESEH99999.pdf",estructura: "HAM_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Registro de enfermería"},
+                    {nombre:"HAU_900196346_ESEH99999.pdf",estructura: "HAU_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de atención de urgencias"},
+                    {nombre:"HEV_900196346_ESEH99999.pdf",estructura: "HEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de evolución (Historia clínica)"},
+                    {nombre:"OPF_900196346_ESEH99999.pdf",estructura: "OPF_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Orden de prescripción facultativa (ambulatorio)"},
+                    {nombre:"PDX_900196346_ESEH99999.pdf",estructura: "PDX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Soportes de ayudas diagnósticas"},
+                    {nombre:"RAN_900196346_ESEH99999.pdf",estructura: "RAN_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de antestesia"},
+                    {nombre:"FMO_900196346_ESEH99999.pdf",estructura: "FMO_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Factura material de osteosintesis"}
+                ] }
+            ]
+        },
+        {
+            id: 11, nombre: "HOSPITAL NAVAL NIVEL III DE CARTAGENA",
+            subcarpetas: [
+                { nombre: "ESEH999999", archivos: [
+                    {nombre:"FEV_900196346_ESEH99999.pdf",estructura: "FEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Representación gráfica de fáctura electrónica de venta"},
+                    {nombre:"PDE_900196346_ESEH99999.pdf",estructura: "PDE_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Autorización y documentos"},
+                    {nombre:"TAP_900196346_ESEH99999.pdf",estructura: "HTL_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de traslado"},
+                    {nombre:"EPI_900196346_ESEH99999.pdf",estructura: "EPI_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Epicrisis"},
+                    {nombre:"CRC_900196346_ESEH99999.pdf",estructura: "CRC_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Certificado de atención"},
+                    {nombre:"DQX_900196346_ESEH99999.pdf",estructura: "DQX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Descripción quirurgica"},
+                    {nombre:"HAM_900196346_ESEH99999.pdf",estructura: "HAM_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Registro de enfermería"},
+                    {nombre:"HAU_900196346_ESEH99999.pdf",estructura: "HAU_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de atención de urgencias"},
+                    {nombre:"HEV_900196346_ESEH99999.pdf",estructura: "HEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de evolución (Historia clínica)"},
+                    {nombre:"OPF_900196346_ESEH99999.pdf",estructura: "OPF_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Orden de prescripción facultativa (ambulatorio)"},
+                    {nombre:"PDX_900196346_ESEH99999.pdf",estructura: "PDX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Soportes de ayudas diagnósticas"},
+                    {nombre:"RAN_900196346_ESEH99999.pdf",estructura: "RAN_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de antestesia"},
+                    {nombre:"FMO_900196346_ESEH99999.pdf",estructura: "FMO_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Factura material de osteosintesis"}
+                ] }
+            ]
+        },
+        {
+            id: 12, nombre: "SALUD TOTAL",
+            subcarpetas: [
+                { nombre: "ESEH999999", archivos: [
+                    {nombre:"FEV_900196346_ESEH99999.pdf",estructura: "FEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Representación gráfica de fáctura electrónica de venta"},
+                    {nombre:"PDE_900196346_ESEH99999.pdf",estructura: "PDE_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Autorización y documentos"},
+                    {nombre:"TAP_900196346_ESEH99999.pdf",estructura: "HTL_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de traslado"},
+                    {nombre:"EPI_900196346_ESEH99999.pdf",estructura: "EPI_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Epicrisis"},
+                    {nombre:"CRC_900196346_ESEH99999.pdf",estructura: "CRC_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Certificado de atención"},
+                    {nombre:"DQX_900196346_ESEH99999.pdf",estructura: "DQX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Descripción quirurgica"},
+                    {nombre:"HAM_900196346_ESEH99999.pdf",estructura: "HAM_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Registro de enfermería"},
+                    {nombre:"HAU_900196346_ESEH99999.pdf",estructura: "HAU_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de atención de urgencias"},
+                    {nombre:"HEV_900196346_ESEH99999.pdf",estructura: "HEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de evolución (Historia clínica)"},
+                    {nombre:"OPF_900196346_ESEH99999.pdf",estructura: "OPF_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Orden de prescripción facultativa (ambulatorio)"},
+                    {nombre:"PDX_900196346_ESEH99999.pdf",estructura: "PDX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Soportes de ayudas diagnósticas"},
+                    {nombre:"RAN_900196346_ESEH99999.pdf",estructura: "RAN_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de antestesia"},
+                    {nombre:"FMO_900196346_ESEH99999.pdf",estructura: "FMO_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Factura material de osteosintesis"}
+                ] }
+            ]
+        },
+        {
+            id: 13, nombre: "SALUD TOTAL",
+            subcarpetas: [
+                { nombre: "ESEH999999", archivos: [
+                    {nombre:"FEV_900196346_ESEH99999.pdf",estructura: "FEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Representación gráfica de fáctura electrónica de venta"},
+                    {nombre:"PDE_900196346_ESEH99999.pdf",estructura: "PDE_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Autorización y documentos"},
+                    {nombre:"TAP_900196346_ESEH99999.pdf",estructura: "HTL_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de traslado"},
+                    {nombre:"EPI_900196346_ESEH99999.pdf",estructura: "EPI_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Epicrisis"},
+                    {nombre:"CRC_900196346_ESEH99999.pdf",estructura: "CRC_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Certificado de atención"},
+                    {nombre:"DQX_900196346_ESEH99999.pdf",estructura: "DQX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Descripción quirurgica"},
+                    {nombre:"HAM_900196346_ESEH99999.pdf",estructura: "HAM_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Registro de enfermería"},
+                    {nombre:"HAU_900196346_ESEH99999.pdf",estructura: "HAU_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de atención de urgencias"},
+                    {nombre:"HEV_900196346_ESEH99999.pdf",estructura: "HEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de evolución (Historia clínica)"},
+                    {nombre:"OPF_900196346_ESEH99999.pdf",estructura: "OPF_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Orden de prescripción facultativa (ambulatorio)"},
+                    {nombre:"PDX_900196346_ESEH99999.pdf",estructura: "PDX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Soportes de ayudas diagnósticas"},
+                    {nombre:"RAN_900196346_ESEH99999.pdf",estructura: "RAN_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de antestesia"},
+                    {nombre:"FMO_900196346_ESEH99999.pdf",estructura: "FMO_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Factura material de osteosintesis"}
+                ] }
+            ]
+        },
+        {
+            id: 14, nombre: "SANITAS",
+            subcarpetas: [
+                { nombre: "ESEH999999", archivos: [
+                    {nombre:"FEV_900196346_ESEH99999.pdf",estructura: "FEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Representación gráfica de fáctura electrónica de venta"},
+                    {nombre:"PDE_900196346_ESEH99999.pdf",estructura: "PDE_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Autorización y documentos"},
+                    {nombre:"TAP_900196346_ESEH99999.pdf",estructura: "HTL_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de traslado"},
+                    {nombre:"EPI_900196346_ESEH99999.pdf",estructura: "EPI_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Epicrisis"},
+                    {nombre:"CRC_900196346_ESEH99999.pdf",estructura: "CRC_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Certificado de atención"},
+                    {nombre:"DQX_900196346_ESEH99999.pdf",estructura: "DQX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Descripción quirurgica"},
+                    {nombre:"HAM_900196346_ESEH99999.pdf",estructura: "HAM_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Registro de enfermería"},
+                    {nombre:"HAU_900196346_ESEH99999.pdf",estructura: "HAU_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de atención de urgencias"},
+                    {nombre:"HEV_900196346_ESEH99999.pdf",estructura: "HEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de evolución (Historia clínica)"},
+                    {nombre:"OPF_900196346_ESEH99999.pdf",estructura: "OPF_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Orden de prescripción facultativa (ambulatorio)"},
+                    {nombre:"PDX_900196346_ESEH99999.pdf",estructura: "PDX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Soportes de ayudas diagnósticas"},
+                    {nombre:"RAN_900196346_ESEH99999.pdf",estructura: "RAN_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de antestesia"},
+                    {nombre:"FMO_900196346_ESEH99999.pdf",estructura: "FMO_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Factura material de osteosintesis"}
+                ] }
+            ]
+        },
+        {
+            id: 15, nombre: "CAPRESOCA",
+            subcarpetas: [
+                { nombre: "ESEH999999", archivos: [
+                    {nombre:"FEV_900196346_ESEH99999.pdf",estructura: "FEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Representación gráfica de fáctura electrónica de venta"},
+                    {nombre:"PDE_900196346_ESEH99999.pdf",estructura: "PDE_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Autorización y documentos"},
+                    {nombre:"TAP_900196346_ESEH99999.pdf",estructura: "HTL_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de traslado"},
+                    {nombre:"EPI_900196346_ESEH99999.pdf",estructura: "EPI_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Epicrisis"},
+                    {nombre:"CRC_900196346_ESEH99999.pdf",estructura: "CRC_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Certificado de atención"},
+                    {nombre:"DQX_900196346_ESEH99999.pdf",estructura: "DQX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Descripción quirurgica"},
+                    {nombre:"HAM_900196346_ESEH99999.pdf",estructura: "HAM_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Registro de enfermería"},
+                    {nombre:"HAU_900196346_ESEH99999.pdf",estructura: "HAU_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de atención de urgencias"},
+                    {nombre:"HEV_900196346_ESEH99999.pdf",estructura: "HEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de evolución (Historia clínica)"},
+                    {nombre:"OPF_900196346_ESEH99999.pdf",estructura: "OPF_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Orden de prescripción facultativa (ambulatorio)"},
+                    {nombre:"PDX_900196346_ESEH99999.pdf",estructura: "PDX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Soportes de ayudas diagnósticas"},
+                    {nombre:"RAN_900196346_ESEH99999.pdf",estructura: "RAN_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de antestesia"},
+                    {nombre:"FMO_900196346_ESEH99999.pdf",estructura: "FMO_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Factura material de osteosintesis"}
+                ] }
+            ]
+        },
+        {
+            id: 16, nombre: "COMPENSAR EPS",
+            subcarpetas: [
+                { nombre: "ESEH999999", archivos: [
+                    {nombre:"FEV_900196346_ESEH99999.pdf",estructura: "FEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Representación gráfica de fáctura electrónica de venta"},
+                    {nombre:"PDE_900196346_ESEH99999.pdf",estructura: "PDE_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Autorización y documentos"},
+                    {nombre:"TAP_900196346_ESEH99999.pdf",estructura: "HTL_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de traslado"},
+                    {nombre:"EPI_900196346_ESEH99999.pdf",estructura: "EPI_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Epicrisis"},
+                    {nombre:"CRC_900196346_ESEH99999.pdf",estructura: "CRC_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Certificado de atención"},
+                    {nombre:"DQX_900196346_ESEH99999.pdf",estructura: "DQX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Descripción quirurgica"},
+                    {nombre:"HAM_900196346_ESEH99999.pdf",estructura: "HAM_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Registro de enfermería"},
+                    {nombre:"HAU_900196346_ESEH99999.pdf",estructura: "HAU_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de atención de urgencias"},
+                    {nombre:"HEV_900196346_ESEH99999.pdf",estructura: "HEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de evolución (Historia clínica)"},
+                    {nombre:"OPF_900196346_ESEH99999.pdf",estructura: "OPF_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Orden de prescripción facultativa (ambulatorio)"},
+                    {nombre:"PDX_900196346_ESEH99999.pdf",estructura: "PDX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Soportes de ayudas diagnósticas"},
+                    {nombre:"RAN_900196346_ESEH99999.pdf",estructura: "RAN_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de antestesia"},
+                    {nombre:"FMO_900196346_ESEH99999.pdf",estructura: "FMO_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Factura material de osteosintesis"}
+                ] }
+            ]
+        },
+        {
+            id: 17, nombre: "PROTEGER EPS",
+            subcarpetas: [
+                { nombre: "ESEH999999", archivos: [
+                    {nombre:"ESEH99999.pdf",estructura: "#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Representación gráfica de fáctura electrónica de venta"},
+                    {nombre:"PDE_900196346_ESEH99999.pdf",estructura: "PDE_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Autorización y documentos"},
+                    {nombre:"TAP_900196346_ESEH99999.pdf",estructura: "HTL_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de traslado"},
+                    {nombre:"EPI_900196346_ESEH99999.pdf",estructura: "EPI_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Epicrisis"},
+                    {nombre:"CRC_900196346_ESEH99999.pdf",estructura: "CRC_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Certificado de atención"},
+                    {nombre:"DQX_900196346_ESEH99999.pdf",estructura: "DQX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Descripción quirurgica"},
+                    {nombre:"HAM_900196346_ESEH99999.pdf",estructura: "HAM_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Registro de enfermería"},
+                    {nombre:"HAU_900196346_ESEH99999.pdf",estructura: "HAU_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de atención de urgencias"},
+                    {nombre:"HEV_900196346_ESEH99999.pdf",estructura: "HEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de evolución (Historia clínica)"},
+                    {nombre:"OPF_900196346_ESEH99999.pdf",estructura: "OPF_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Orden de prescripción facultativa (ambulatorio)"},
+                    {nombre:"PDX_900196346_ESEH99999.pdf",estructura: "PDX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Soportes de ayudas diagnósticas"},
+                    {nombre:"RAN_900196346_ESEH99999.pdf",estructura: "RAN_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de antestesia"},
+                    {nombre:"FMO_900196346_ESEH99999.pdf",estructura: "FMO_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Factura material de osteosintesis"}
+                ] }
+            ]
+        },
+        {
+            id: 18, nombre: "FAMILIAR DE COLOMBIA",
+            subcarpetas: [
+                { nombre: "ESEH999999", archivos: [
+                    {nombre:"ESEH99999.pdf",estructura: "#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Representación gráfica de fáctura electrónica de venta"},
+                    {nombre:"PDE_900196346_ESEH99999.pdf",estructura: "PDE_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Autorización y documentos"},
+                    {nombre:"TAP_900196346_ESEH99999.pdf",estructura: "HTL_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de traslado"},
+                    {nombre:"EPI_900196346_ESEH99999.pdf",estructura: "EPI_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Epicrisis"},
+                    {nombre:"CRC_900196346_ESEH99999.pdf",estructura: "CRC_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Certificado de atención"},
+                    {nombre:"DQX_900196346_ESEH99999.pdf",estructura: "DQX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Descripción quirurgica"},
+                    {nombre:"HAM_900196346_ESEH99999.pdf",estructura: "HAM_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Registro de enfermería"},
+                    {nombre:"HAU_900196346_ESEH99999.pdf",estructura: "HAU_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de atención de urgencias"},
+                    {nombre:"HEV_900196346_ESEH99999.pdf",estructura: "HEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de evolución (Historia clínica)"},
+                    {nombre:"OPF_900196346_ESEH99999.pdf",estructura: "OPF_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Orden de prescripción facultativa (ambulatorio)"},
+                    {nombre:"PDX_900196346_ESEH99999.pdf",estructura: "PDX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Soportes de ayudas diagnósticas"},
+                    {nombre:"RAN_900196346_ESEH99999.pdf",estructura: "RAN_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de antestesia"},
+                    {nombre:"FMO_900196346_ESEH99999.pdf",estructura: "FMO_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Factura material de osteosintesis"}
+                ] }
+            ]
+        },
+        {
+            id: 19, nombre: "DUSAKAWI",
+            subcarpetas: [
+                { nombre: "ESEH999999", archivos: [
+                    {nombre:"ESEH99999.pdf",estructura: "#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Representación gráfica de fáctura electrónica de venta"},
+                    {nombre:"PDE_900196346_ESEH99999.pdf",estructura: "PDE_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Autorización y documentos"},
+                    {nombre:"TAP_900196346_ESEH99999.pdf",estructura: "HTL_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de traslado"},
+                    {nombre:"EPI_900196346_ESEH99999.pdf",estructura: "EPI_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Epicrisis"},
+                    {nombre:"CRC_900196346_ESEH99999.pdf",estructura: "CRC_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Certificado de atención"},
+                    {nombre:"DQX_900196346_ESEH99999.pdf",estructura: "DQX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Descripción quirurgica"},
+                    {nombre:"HAM_900196346_ESEH99999.pdf",estructura: "HAM_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Registro de enfermería"},
+                    {nombre:"HAU_900196346_ESEH99999.pdf",estructura: "HAU_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de atención de urgencias"},
+                    {nombre:"HEV_900196346_ESEH99999.pdf",estructura: "HEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de evolución (Historia clínica)"},
+                    {nombre:"OPF_900196346_ESEH99999.pdf",estructura: "OPF_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Orden de prescripción facultativa (ambulatorio)"},
+                    {nombre:"PDX_900196346_ESEH99999.pdf",estructura: "PDX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Soportes de ayudas diagnósticas"},
+                    {nombre:"RAN_900196346_ESEH99999.pdf",estructura: "RAN_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de antestesia"},
+                    {nombre:"FMO_900196346_ESEH99999.pdf",estructura: "FMO_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Factura material de osteosintesis"}
+                ] }
+            ]
+        },
+        {
+            id: 20, nombre: "ASMET SALUD",
+            subcarpetas: [
+                { nombre: "ESEH999999", archivos: [
+                    {nombre:"ESEH99999.pdf",estructura: "#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Representación gráfica de fáctura electrónica de venta"},
+                    {nombre:"PDE_900196346_ESEH99999.pdf",estructura: "PDE_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Autorización y documentos"},
+                    {nombre:"TAP_900196346_ESEH99999.pdf",estructura: "HTL_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de traslado"},
+                    {nombre:"EPI_900196346_ESEH99999.pdf",estructura: "EPI_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Epicrisis"},
+                    {nombre:"CRC_900196346_ESEH99999.pdf",estructura: "CRC_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Certificado de atención"},
+                    {nombre:"DQX_900196346_ESEH99999.pdf",estructura: "DQX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Descripción quirurgica"},
+                    {nombre:"HAM_900196346_ESEH99999.pdf",estructura: "HAM_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Registro de enfermería"},
+                    {nombre:"HAU_900196346_ESEH99999.pdf",estructura: "HAU_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de atención de urgencias"},
+                    {nombre:"HEV_900196346_ESEH99999.pdf",estructura: "HEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de evolución (Historia clínica)"},
+                    {nombre:"OPF_900196346_ESEH99999.pdf",estructura: "OPF_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Orden de prescripción facultativa (ambulatorio)"},
+                    {nombre:"PDX_900196346_ESEH99999.pdf",estructura: "PDX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Soportes de ayudas diagnósticas"},
+                    {nombre:"RAN_900196346_ESEH99999.pdf",estructura: "RAN_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de antestesia"},
+                    {nombre:"FMO_900196346_ESEH99999.pdf",estructura: "FMO_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Factura material de osteosintesis"}
+                ] }
+            ]
+        },
+        {
+            id: 21, nombre: "COOSALUD",
+            subcarpetas: [
+                { nombre: "ESEH999999", archivos: [
+                    {nombre:"ESEH99999.pdf",estructura: "#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Representación gráfica de fáctura electrónica de venta"},
+                    {nombre:"PDE_900196346_ESEH99999.pdf",estructura: "PDE_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Autorización y documentos"},
+                    {nombre:"TAP_900196346_ESEH99999.pdf",estructura: "HTL_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de traslado"},
+                    {nombre:"EPI_900196346_ESEH99999.pdf",estructura: "EPI_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Epicrisis"},
+                    {nombre:"CRC_900196346_ESEH99999.pdf",estructura: "CRC_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Certificado de atención"},
+                    {nombre:"DQX_900196346_ESEH99999.pdf",estructura: "DQX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Descripción quirurgica"},
+                    {nombre:"HAM_900196346_ESEH99999.pdf",estructura: "HAM_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Registro de enfermería"},
+                    {nombre:"HAU_900196346_ESEH99999.pdf",estructura: "HAU_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de atención de urgencias"},
+                    {nombre:"HEV_900196346_ESEH99999.pdf",estructura: "HEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de evolución (Historia clínica)"},
+                    {nombre:"OPF_900196346_ESEH99999.pdf",estructura: "OPF_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Orden de prescripción facultativa (ambulatorio)"},
+                    {nombre:"PDX_900196346_ESEH99999.pdf",estructura: "PDX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Soportes de ayudas diagnósticas"},
+                    {nombre:"RAN_900196346_ESEH99999.pdf",estructura: "RAN_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de antestesia"},
+                    {nombre:"FMO_900196346_ESEH99999.pdf",estructura: "FMO_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Factura material de osteosintesis"}
+                ] }
+            ]
+        },
+        {
+            id: 22, nombre: "ANAS WAYUU",
+            subcarpetas: [
+                { nombre: "ESEH999999", archivos: [
+                    {nombre:"F-ESEH99999.pdf",estructura: "F-#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Representación gráfica de fáctura electrónica de venta"},
+                    {nombre:"S-ESEH99999.pdf",estructura: "S-#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Soportes de prestación efectiva"}
+                ] }
+            ]
+        },
+        {
+            id: 23, nombre: "UNION TEMPORAL SERVISALUD",
+            subcarpetas: [
+                { nombre: "FACTURA", archivos: [
+                    {nombre:"ESEH99999.pdf",estructura: "#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Representación gráfica de fáctura electrónica de venta"}
+                ] },
+                { nombre: "SOPORTE", archivos: [
+                    {nombre:"ESEH99999.pdf",estructura: "#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Soportes de prestación efectiva"}
+                ] }
+            ]
+        },
+        {
+            id: 24, nombre: "EMSSANAR",
+            subcarpetas: [
+                { nombre: "ESEH999999", archivos: [
+                    {nombre:"FAC.pdf",estructura: "FAC.pdf",extension:"pdf",color:"#c21313",detalles: "Representación gráfica de fáctura electrónica de venta"},
+                    {nombre:"AIU.pdf",estructura: "AIU.pdf",extension:"pdf",color:"#c21313",detalles: "Anexo 2"},
+                    {nombre:"SOL.pdf",estructura: "SOL.pdf",extension:"pdf",color:"#c21313",detalles: "Anexo 3"},
+                    {nombre:"APT.pdf",estructura: "APT.pdf",extension:"pdf",color:"#c21313",detalles: "Apoyo terapeutico"},
+                    {nombre:"AUT.pdf",estructura: "AUT.pdf",extension:"pdf",color:"#c21313",detalles: "Bitacora Traslado"},
+                    {nombre:"AIM.pdf",estructura: "AIM.pdf",extension:"pdf",color:"#c21313",detalles: "Aplicación Medicamentos"},
+                    {nombre:"DID.pdf",estructura: "DID.pdf",extension:"pdf",color:"#c21313",detalles: "Identificación o Consulta ADRES"},
+                    {nombre:"HCE.pdf",estructura: "HCE.pdf",extension:"pdf",color:"#c21313",detalles: "Atención urgencias"},
+                    {nombre:"FCI.pdf",estructura: "FCI.pdf",extension:"pdf",color:"#c21313",detalles: "Formato consentimiento informado"},
+                    {nombre:"FMD.pdf",estructura: "FMD.pdf",extension:"pdf",color:"#c21313",detalles: "Formula medica"},
+                    {nombre:"NDE.pdf",estructura: "NDE.pdf",extension:"pdf",color:"#c21313",detalles: "Nota de enfermería"},
+                    {nombre:"NEV.pdf",estructura: "NEV.pdf",extension:"pdf",color:"#c21313",detalles: "Nota de evolución"},
+                    {nombre:"NOP.pdf",estructura: "NOP.pdf",extension:"pdf",color:"#c21313",detalles: "Nota operatoria"},
+                    {nombre:"PTG.pdf",estructura: "PTG.pdf",extension:"pdf",color:"#c21313",detalles: "Patología"},
+                    {nombre:"LAB.pdf",estructura: "LAB.pdf",extension:"pdf",color:"#c21313",detalles: "Resultados de laboratorio"},
+                    {nombre:"STP.pdf",estructura: "STP.pdf",extension:"pdf",color:"#c21313",detalles: "Sin tipificar (acta glosa/hoja de admisión)"},
+                ] }
+            ]
+        },
+        {
+            id: 25, nombre: "COMFAMILIAR GUAJIRA",
+            subcarpetas: null,
+            archivosDirectos: [
+                {nombre:"ESEH99999.pdf",estructura: "#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Todo en un mismo pdf"}
+            ]
+        },
+        {
+            id: 26, nombre: "ECOOPSOS",
+            subcarpetas: null,
+            archivosDirectos: [
+                {nombre:"ESEH99999.pdf",estructura: "#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Todo en un mismo pdf"}
+            ]
+        },
+        {
+            id: 27, nombre: "COMFENALCO VALLE",
+            subcarpetas: null,
+            archivosDirectos: [
+                {nombre:"ESEH99999.pdf",estructura: "#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Todo en un mismo pdf"}
+            ]
+        },
+        {
+            id: 28, nombre: "FAMISANAR EPS",
+            subcarpetas: [
+                { nombre: "ESEH999999", archivos: [
+                    {nombre:"FEV_900196346_ESEH99999.pdf",estructura: "FEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Representación gráfica de fáctura electrónica de venta"},
+                    {nombre:"PDE_900196346_ESEH99999.pdf",estructura: "PDE_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Autorización y documentos"},
+                    {nombre:"TAP_900196346_ESEH99999.pdf",estructura: "HTL_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de traslado"},
+                    {nombre:"EPI_900196346_ESEH99999.pdf",estructura: "EPI_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Epicrisis"},
+                    {nombre:"CRC_900196346_ESEH99999.pdf",estructura: "CRC_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Certificado de atención"},
+                    {nombre:"DQX_900196346_ESEH99999.pdf",estructura: "DQX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Descripción quirurgica"},
+                    {nombre:"HAM_900196346_ESEH99999.pdf",estructura: "HAM_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Registro de enfermería"},
+                    {nombre:"HAU_900196346_ESEH99999.pdf",estructura: "HAU_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de atención de urgencias"},
+                    {nombre:"HEV_900196346_ESEH99999.pdf",estructura: "HEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de evolución (Historia clínica)"},
+                    {nombre:"OPF_900196346_ESEH99999.pdf",estructura: "OPF_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Orden de prescripción facultativa (ambulatorio)"},
+                    {nombre:"PDX_900196346_ESEH99999.pdf",estructura: "PDX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Soportes de ayudas diagnósticas"},
+                    {nombre:"RAN_900196346_ESEH99999.pdf",estructura: "RAN_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de antestesia"},
+                    {nombre:"FMO_900196346_ESEH99999.pdf",estructura: "FMO_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Factura material de osteosintesis"}
+                ] }
+            ]
+        },
+        {
+            id: 29, nombre: "SURA EPS",
+            subcarpetas: [
+                { nombre: "900196346_ESEH_999999", archivos: [
+                    {nombre:"PDE_900196346_ESEH_99999.pdf",estructura: "PDE_#NIT_PREFIJOFACT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Autorización y documentos"},
+                    {nombre:"FEV_900196346_ESEH_99999.pdf",estructura: "FEV_#NIT_PREFIJOFACT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Representación gráfica de fáctura electrónica de venta"},
+                    {nombre:"TAP_900196346_ESEH_99999.pdf",estructura: "HTL_#NIT_PREFIJOFACT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de traslado"},
+                    {nombre:"EPI_900196346_ESEH_99999.pdf",estructura: "EPI_#NIT_PREFIJOFACT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Epicrisis"},
+                    {nombre:"CRC_900196346_ESEH_99999.pdf",estructura: "CRC_#NIT_PREFIJOFACT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Certificado de atención"},
+                    {nombre:"DQX_900196346_ESEH_99999.pdf",estructura: "DQX_#NIT_PREFIJOFACT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Descripción quirurgica"},
+                    {nombre:"HAM_900196346_ESEH_99999.pdf",estructura: "HAM_#NIT_PREFIJOFACT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Registro de enfermería"},
+                    {nombre:"HAU_900196346_ESEH_99999.pdf",estructura: "HAU_#NIT_PREFIJOFACT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de atención de urgencias"},
+                    {nombre:"HEV_900196346_ESEH_99999.pdf",estructura: "HEV_#NIT_PREFIJOFACT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de evolución (Historia clínica)"},
+                    {nombre:"OPF_900196346_ESEH_99999.pdf",estructura: "OPF_#NIT_PREFIJOFACT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Orden de prescripción facultativa (ambulatorio)"},
+                    {nombre:"PDX_900196346_ESEH_99999.pdf",estructura: "PDX_#NIT_PREFIJOFACT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Soportes de ayudas diagnósticas"},
+                    {nombre:"RAN_900196346_ESEH_99999.pdf",estructura: "RAN_#NIT_PREFIJOFACT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de antestesia"},
+                    {nombre:"FMO_900196346_ESEH_99999.pdf",estructura: "FMO_#NIT_PREFIJOFACT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Factura material de osteosintesis"}
+                ] }
+            ]
+        },
+        {
+            id: 30, nombre: "DISPENSARIO MEDICO NIVEL II DE BOGOTÁ",
+            subcarpetas: null,
+            archivosDirectos:[
+                {nombre:"ESEH999999.pdf",estructura: "IMPRESO",extension:"export",color:"#13c276",detalles: "Todo lo relacionado con la factura, también debe entregarse en físico"},
+            ]
+        },
+        {
+            id: 31, nombre: "REGIONAL DE ASEGURAMIENTO",
+            subcarpetas: null,
+            archivosDirectos:[
+                {nombre:"ESEH999999.pdf",estructura: "IMPRESO",extension:"export",color:"#13c276",detalles: "Todo lo relacionado con la factura, también debe entregarse en físico"},
+            ]
+        },
+        {
+            id: 32, nombre: "POLICIA METROPOLITANA CARTAGENA DE INDIAS",
+            subcarpetas: null,
+            archivosDirectos:[
+                {nombre:"ESEH999999.pdf",estructura: "IMPRESO",extension:"export",color:"#13c276",detalles: "Todo lo relacionado con la factura, también debe entregarse en físico"},
+            ]
+        },
+        {
+            id: 33, nombre: "DISPENSARIO MEDICO BARRANQUILLA",
+            subcarpetas: null,
+            archivosDirectos:[
+                {nombre:"ESEH999999.pdf",estructura: "IMPRESO",extension:"export",color:"#13c276",detalles: "Todo lo relacionado con la factura, también debe entregarse en físico"},
+            ]
+        },
+        {
+            id: 34, nombre: "UNIDAD MEDICO ASISTENCIAL DEL PUTUMAYO",
+            subcarpetas: null,
+            archivosDirectos:[
+                {nombre:"ESEH999999.pdf",estructura: "IMPRESO",extension:"export",color:"#13c276",detalles: "Todo lo relacionado con la factura, también debe entregarse en físico"},
+            ]
+        },
+        {
+            id: 35, nombre: "SEGUROS COMERCIALES BOLIVAR SOAT",
+            subcarpetas: [
+                { nombre: "ESEH999999", archivos: [
+                    {nombre:"ESEH99999.pdf",estructura: "#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Representación gráfica de fáctura electrónica de venta"},
+                    {nombre:"ESEH99999_SOP_1.pdf",estructura: "#FACTURA_SOP_1.pdf",extension:"pdf",color:"#c21313",detalles: "Soportes de prestación efectiva"}
+                ] }
+            ]
+        },
+        {
+            id: 36, nombre: "ASEGURADORA SOLIDARIA SOAT",
+            subcarpetas: [
+                { nombre: "ESEH999999", archivos: [
+                    {nombre:"ESEH99999.pdf",estructura: "#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Representación gráfica de fáctura electrónica de venta"},
+                    {nombre:"ESEH99999_SOP_1.pdf",estructura: "#FACTURA_SOP_1.pdf",extension:"pdf",color:"#c21313",detalles: "Soportes de prestación efectiva"}
+                ] }
+            ]
+        },
+        {
+            id: 37, nombre: "COMPAÑIA MUNDIAL SOAT",
+            subcarpetas: [
+                { nombre: "ESEH999999", archivos: [
+                    {nombre:"ESEH99999.pdf",estructura: "#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Representación gráfica de fáctura electrónica de venta"},
+                    {nombre:"HISTORIA.pdf",estructura: "HISTORIA.pdf",extension:"pdf",color:"#c21313",detalles: "Soportes de prestación efectiva"},
+                    {nombre:"FURIPS.pdf",estructura: "FURIPS.pdf",extension:"pdf",color:"#c21313",detalles: "Furips"}
+                ] }
+            ]
+        },
+        {
+            id: 38, nombre: "AXA COLPATRIA SOAT",
+            subcarpetas: [
+                { nombre: "ESEH999999", archivos: [
+                    {nombre:"FACTURA.pdf",estructura: "FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Representación gráfica de fáctura electrónica de venta"},
+                    {nombre:"HISTORIA.pdf",estructura: "HISTORIA.pdf",extension:"pdf",color:"#c21313",detalles: "Soportes de prestación efectiva"},
+                    {nombre:"FURIPS.pdf",estructura: "FURIPS.pdf",extension:"pdf",color:"#c21313",detalles: "Furips"}
+                ] }
+            ]
+        },
+        {
+            id: 39, nombre: "LA EQUIDAD SEGUROS SOAT",
+            subcarpetas: [
+                { nombre: "ESEH999999", archivos: [
+                    {nombre:"FACTURA.pdf",estructura: "FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Representación gráfica de fáctura electrónica de venta"},
+                    {nombre:"HISTORIA.pdf",estructura: "HISTORIA.pdf",extension:"pdf",color:"#c21313",detalles: "Soportes de prestación efectiva"},
+                    {nombre:"FURIPS.pdf",estructura: "FURIPS.pdf",extension:"pdf",color:"#c21313",detalles: "Furips"}
+                ] }
+            ]
+        },
+        {
+            id: 40, nombre: "LA PREVISORA SOAT",
+            subcarpetas: [
+                { nombre: "ESEH999999", archivos: [
+                    {nombre:"FEV_900196346_ESEH99999.pdf",estructura: "FEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Representación gráfica de fáctura electrónica de venta"},
+                    {nombre:"PDE_900196346_ESEH99999.pdf",estructura: "PDE_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Autorización y documentos"},
+                    {nombre:"TAP_900196346_ESEH99999.pdf",estructura: "HTL_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de traslado"},
+                    {nombre:"EPI_900196346_ESEH99999.pdf",estructura: "EPI_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Epicrisis"},
+                    {nombre:"CRC_900196346_ESEH99999.pdf",estructura: "CRC_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Certificado de atención"},
+                    {nombre:"DQX_900196346_ESEH99999.pdf",estructura: "DQX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Descripción quirurgica"},
+                    {nombre:"HAM_900196346_ESEH99999.pdf",estructura: "HAM_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Registro de enfermería"},
+                    {nombre:"HAU_900196346_ESEH99999.pdf",estructura: "HAU_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de atención de urgencias"},
+                    {nombre:"HEV_900196346_ESEH99999.pdf",estructura: "HEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de evolución (Historia clínica)"},
+                    {nombre:"OPF_900196346_ESEH99999.pdf",estructura: "OPF_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Orden de prescripción facultativa (ambulatorio)"},
+                    {nombre:"PDX_900196346_ESEH99999.pdf",estructura: "PDX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Soportes de ayudas diagnósticas"},
+                    {nombre:"RAN_900196346_ESEH99999.pdf",estructura: "RAN_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de antestesia"},
+                    {nombre:"FMO_900196346_ESEH99999.pdf",estructura: "FMO_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Factura material de osteosintesis"},
+                    {nombre:"FURIPS_900196346_ESEH99999.pdf",estructura: "FURIPS_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Furips (opcional)"}
+                ] }
+            ]
+        },
+        {
+            id: 41, nombre: "ADRES",
+            subcarpetas: [
+                { nombre: "ESEH999999", archivos: [
+                    {nombre:"FAC_900196346_ESEH99999.pdf",estructura: "FEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Representación gráfica de fáctura electrónica de venta"},
+                    {nombre:"PDE_900196346_ESEH99999.pdf",estructura: "PDE_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Autorización y documentos"},
+                    {nombre:"TAP_900196346_ESEH99999.pdf",estructura: "HTL_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de traslado"},
+                    {nombre:"EPI_900196346_ESEH99999.pdf",estructura: "EPI_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Epicrisis"},
+                    {nombre:"CRC_900196346_ESEH99999.pdf",estructura: "CRC_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Certificado de atención"},
+                    {nombre:"DQX_900196346_ESEH99999.pdf",estructura: "DQX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Descripción quirurgica"},
+                    {nombre:"HAM_900196346_ESEH99999.pdf",estructura: "HAM_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Registro de enfermería"},
+                    {nombre:"HAU_900196346_ESEH99999.pdf",estructura: "HAU_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de atención de urgencias"},
+                    {nombre:"HEV_900196346_ESEH99999.pdf",estructura: "HEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de evolución (Historia clínica)"},
+                    {nombre:"HAO_900196346_ESEH99999.pdf",estructura: "HAO_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de atención odontológica"},
+                    {nombre:"LDP_900196346_ESEH99999.pdf",estructura: "LDP_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Lista de precios"},
+                    {nombre:"OPF_900196346_ESEH99999.pdf",estructura: "OPF_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Orden de prescripción facultativa (ambulatorio)"},
+                    {nombre:"PDX_900196346_ESEH99999.pdf",estructura: "PDX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Soportes de ayudas diagnósticas"},
+                    {nombre:"RAN_900196346_ESEH99999.pdf",estructura: "RAN_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de antestesia"},
+                    {nombre:"FMO_900196346_ESEH99999.pdf",estructura: "FMO_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Factura material de osteosintesis"},
+                    {nombre:"FAT_900196346_ESEH99999.pdf",estructura: "FAT_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Copia de la factura de venta por el cobro a la aseguradora SOAT, ADRES o la entidad que haga sus veces"},
+                    {nombre:"IPO_900196346_ESEH99999.pdf",estructura: "IPO_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Documento para dar aviso a la entidad competente"},
+                    {nombre:"CVE_900196346_ESEH99999.pdf",estructura: "CVE_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Acreditación de víctima de evento natural y terrorista: certificación emitida por Consejo municipal de gestión de riesgo o alcalde como miembro del concejo."},
+                    {nombre:"CRA_900196346_ESEH99999.pdf",estructura: "CRA_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Carta de reconocimiento de aseguradora (Agotamiento de tope)"},
+                    {nombre:"TIR_900196346_ESEH99999.pdf",estructura: "TIR_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Tarifas interinstitucionales para remisiones"},
+                    {nombre:"ADM_900196346_ESEH99999.pdf",estructura: "ADM_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Factura material de osteosintesis"},
+                    {nombre:"FURIPS_900196346_ESEH99999.pdf",estructura: "FURIPS_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Furips (opcional)"}
+                ] }
+            ]
+        },
+        {
+            id: 42, nombre: "SEGUROS DEL ESTADO SOAT",
+            subcarpetas: null,
+            archivosDirectos:[
+                {nombre:"ESEH999999.pdf",estructura: "#FACTURA",extension:"pdf",color:"#c21313",detalles: "Todo lo relacionado con la factura en un solo pdf"},
+            ]
+        },
+        {
+            id: 43, nombre: "MAPFRE SOAT",
+            subcarpetas: null,
+            archivosDirectos:[
+                {nombre:"ESEH999999.pdf",estructura: "#FACTURA",extension:"pdf",color:"#c21313",detalles: "Todo lo relacionado con la factura en un solo pdf"},
+            ]
+        },
+        {
+            id: 44, nombre: "HDI SEGUROS (LIBERY)",
+            subcarpetas: null,
+            archivosDirectos:[
+                {nombre:"ESEH999999.pdf",estructura: "#FACTURA",extension:"pdf",color:"#c21313",detalles: "Todo lo relacionado con la factura en un solo pdf"},
+            ]
+        },
+        {
+            id: 45, nombre: "SURAMERICANA SOAT",
+            subcarpetas: null,
+            archivosDirectos:[
+                {nombre:"ESEH999999.pdf",estructura: "#FACTURA",extension:"pdf",color:"#c21313",detalles: "Todo lo relacionado con la factura en un solo pdf"},
+            ]
+        },
+        {
+            id: 46, nombre: "SEGUROS BOLÍVAR ARL",
+            subcarpetas: null,
+            archivosDirectos:[
+                {nombre:"ESEH999999.pdf",estructura: "#FACTURA",extension:"pdf",color:"#c21313",detalles: "Todo lo relacionado con la factura en un solo pdf"},
+            ]
+        },
+        {
+            id: 47, nombre: "AXA COLPATRIA ARL",
+            subcarpetas: [
+                { nombre: "ESEH999999", archivos: [
+                    {nombre:"ESEH99999.pdf",estructura: "#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Representación gráfica de fáctura electrónica de venta"},
+                    {nombre:"PDE_900196346_ESEH99999.pdf",estructura: "PDE_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Autorización y documentos"},
+                    {nombre:"TAP_900196346_ESEH99999.pdf",estructura: "HTL_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de traslado"},
+                    {nombre:"EPI_900196346_ESEH99999.pdf",estructura: "EPI_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Epicrisis"},
+                    {nombre:"CRC_900196346_ESEH99999.pdf",estructura: "CRC_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Certificado de atención"},
+                    {nombre:"DQX_900196346_ESEH99999.pdf",estructura: "DQX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Descripción quirurgica"},
+                    {nombre:"HAM_900196346_ESEH99999.pdf",estructura: "HAM_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Registro de enfermería"},
+                    {nombre:"HAU_900196346_ESEH99999.pdf",estructura: "HAU_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de atención de urgencias"},
+                    {nombre:"HEV_900196346_ESEH99999.pdf",estructura: "HEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de evolución (Historia clínica)"},
+                    {nombre:"OPF_900196346_ESEH99999.pdf",estructura: "OPF_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Orden de prescripción facultativa (ambulatorio)"},
+                    {nombre:"PDX_900196346_ESEH99999.pdf",estructura: "PDX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Soportes de ayudas diagnósticas"},
+                    {nombre:"RAN_900196346_ESEH99999.pdf",estructura: "RAN_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de antestesia"},
+                    {nombre:"FMO_900196346_ESEH99999.pdf",estructura: "FMO_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Factura material de osteosintesis"}
+                ] }
+            ]
+        },
+        {
+            id: 48, nombre: "COLMENA ARL",
+            subcarpetas: [
+                { nombre: "ESEH999999", archivos: [
+                    {nombre:"FACTURA.pdf",estructura: "FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Representación gráfica de fáctura electrónica de venta"},
+                    {nombre:"SOPORTES.pdf",estructura: "SOPORTES.pdf",extension:"pdf",color:"#c21313",detalles: "Soportes de prestación efectiva"}
+                ] }
+            ]
+        },
+        {
+            id: 49, nombre: "POSITIVA ARL",
+            subcarpetas: [
+                { nombre: "ESEH999999", archivos: [
+                    {nombre:"FAC_900196346_ESEH99999.pdf",estructura: "FAC_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Representación gráfica de fáctura electrónica de venta"},
+                    {nombre:"PDE_900196346_ESEH99999.pdf",estructura: "PDE_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Autorización y documentos"},
+                    {nombre:"TAP_900196346_ESEH99999.pdf",estructura: "HTL_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de traslado"},
+                    {nombre:"EPI_900196346_ESEH99999.pdf",estructura: "EPI_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Epicrisis"},
+                    {nombre:"CRC_900196346_ESEH99999.pdf",estructura: "CRC_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Certificado de atención"},
+                    {nombre:"DQX_900196346_ESEH99999.pdf",estructura: "DQX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Descripción quirurgica"},
+                    {nombre:"HAM_900196346_ESEH99999.pdf",estructura: "HAM_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Registro de enfermería"},
+                    {nombre:"HAU_900196346_ESEH99999.pdf",estructura: "HAU_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de atención de urgencias"},
+                    {nombre:"HEV_900196346_ESEH99999.pdf",estructura: "HEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de evolución (Historia clínica)"},
+                    {nombre:"OPF_900196346_ESEH99999.pdf",estructura: "OPF_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Orden de prescripción facultativa (ambulatorio)"},
+                    {nombre:"PDX_900196346_ESEH99999.pdf",estructura: "PDX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Soportes de ayudas diagnósticas"},
+                    {nombre:"RAN_900196346_ESEH99999.pdf",estructura: "RAN_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de antestesia"},
+                    {nombre:"FMO_900196346_ESEH99999.pdf",estructura: "FMO_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Factura material de osteosintesis"}
+                ] }
+            ]
+        },
+        {
+            id: 50, nombre: "SURA ARL",
+            subcarpetas: [
+                { nombre: "900196346_ESEH_999999", archivos: [
+                    {nombre:"PDE_900196346_ESEH_99999.pdf",estructura: "PDE_#NIT_PREFIJOFACT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Autorización y documentos"},
+                    {nombre:"FEV_900196346_ESEH_99999.pdf",estructura: "FEV_#NIT_PREFIJOFACT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Representación gráfica de fáctura electrónica de venta"},
+                    {nombre:"TAP_900196346_ESEH_99999.pdf",estructura: "HTL_#NIT_PREFIJOFACT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de traslado"},
+                    {nombre:"EPI_900196346_ESEH_99999.pdf",estructura: "EPI_#NIT_PREFIJOFACT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Epicrisis"},
+                    {nombre:"CRC_900196346_ESEH_99999.pdf",estructura: "CRC_#NIT_PREFIJOFACT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Certificado de atención"},
+                    {nombre:"DQX_900196346_ESEH_99999.pdf",estructura: "DQX_#NIT_PREFIJOFACT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Descripción quirurgica"},
+                    {nombre:"HAM_900196346_ESEH_99999.pdf",estructura: "HAM_#NIT_PREFIJOFACT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Registro de enfermería"},
+                    {nombre:"HAU_900196346_ESEH_99999.pdf",estructura: "HAU_#NIT_PREFIJOFACT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de atención de urgencias"},
+                    {nombre:"HEV_900196346_ESEH_99999.pdf",estructura: "HEV_#NIT_PREFIJOFACT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de evolución (Historia clínica)"},
+                    {nombre:"OPF_900196346_ESEH_99999.pdf",estructura: "OPF_#NIT_PREFIJOFACT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Orden de prescripción facultativa (ambulatorio)"},
+                    {nombre:"PDX_900196346_ESEH_99999.pdf",estructura: "PDX_#NIT_PREFIJOFACT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Soportes de ayudas diagnósticas"},
+                    {nombre:"RAN_900196346_ESEH_99999.pdf",estructura: "RAN_#NIT_PREFIJOFACT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de antestesia"},
+                    {nombre:"FMO_900196346_ESEH_99999.pdf",estructura: "FMO_#NIT_PREFIJOFACT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Factura material de osteosintesis"}
+                ] }
+            ]
+        }
+        
+
+    ];
+    // Para empresas sin subcarpetas ni archivosDirectos, se mostrará un mensaje o archivos por defecto basados en res 2284
+    const defaultArchivosEstructura = [
+        {nombre:"FVS_900196346_ESEH99999.pdf",estructura: "FEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Representación gráfica de fáctura electrónica de venta"},
+        {nombre:"PDE_900196346_ESEH99999.pdf",estructura: "PDE_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Autorización y documentos"},
+        {nombre:"TAP_900196346_ESEH99999.pdf",estructura: "HTL_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de traslado"},
+        {nombre:"EPI_900196346_ESEH99999.pdf",estructura: "EPI_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Epicrisis"},
+        {nombre:"CRC_900196346_ESEH99999.pdf",estructura: "CRC_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Certificado de atención"},
+        {nombre:"DQX_900196346_ESEH99999.pdf",estructura: "DQX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Descripción quirurgica"},
+        {nombre:"HAM_900196346_ESEH99999.pdf",estructura: "HAM_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Registro de enfermería"},
+        {nombre:"HAU_900196346_ESEH99999.pdf",estructura: "HAU_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de atención de urgencias"},
+        {nombre:"HEV_900196346_ESEH99999.pdf",estructura: "HEV_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de evolución (Historia clínica)"},
+        {nombre:"OPF_900196346_ESEH99999.pdf",estructura: "OPF_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Orden de prescripción facultativa (ambulatorio)"},
+        {nombre:"PDX_900196346_ESEH99999.pdf",estructura: "PDX_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Soportes de ayudas diagnósticas"},
+        {nombre:"RAN_900196346_ESEH99999.pdf",estructura: "RAN_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Hoja de antestesia"},
+        {nombre:"FMO_900196346_ESEH99999.pdf",estructura: "FMO_#NIT_#FACTURA.pdf",extension:"pdf",color:"#c21313",detalles: "Factura material de osteosintesis"}
+    ];
+
+    // Estado navegación
+    let currentMode = "empresas";   // 'empresas', 'subcarpetas', 'archivos'
+    let currentEmpresaId = null;
+    let currentSubcarpetaIndex = null;
+    let currentEmpresaObj = null;
+
+    function getEmpresaById(id) { return empresasData.find(e => e.id === id); }
+
+    function renderEntregaView() {
+        const container = document.getElementById("dynamicFolderView");
+        const breadDiv = document.getElementById("breadcrumbContainer");
+        const volverWrapper = document.getElementById("btnVolverWrapper");
+        const searchInput = document.getElementById("buscadorEmpresas");
+        
+        if (currentMode === "empresas") {
+            searchInput.disabled = false;
+            searchInput.placeholder = "Buscar empresa (nombre)...";
+            const term = searchInput.value.toLowerCase();
+            let filtradas = empresasData.filter(emp => emp.nombre.toLowerCase().includes(term));
+            renderEmpresasList(filtradas, container);
+            breadDiv.innerHTML = `<i class="fas fa-building"></i> Empresas afiliadas`;
+            volverWrapper.innerHTML = "";
+        } 
+        else if (currentMode === "subcarpetas") {
+            searchInput.disabled = true;
+            searchInput.placeholder = "Búsqueda disponible en vista empresas";
+            const empresa = getEmpresaById(currentEmpresaId);
+            if (empresa && empresa.subcarpetas && empresa.subcarpetas.length > 0) {
+                renderSubcarpetasList(empresa, container);
+                breadDiv.innerHTML = `<i class="fas fa-folder-open"></i>  ${empresa.nombre} › Subcarpetas`;
+                volverWrapper.innerHTML = `<button class="btn-volver" id="volverEmpresasBtn"><i class="fas fa-arrow-left"></i> Volver a empresas</button>`;
+                document.getElementById("volverEmpresasBtn")?.addEventListener("click", () => {
+                    currentMode = "empresas";
+                    currentEmpresaId = null;
+                    renderEntregaView();
+                });
+            } 
+            else {
+                // empresa sin subcarpetas -> pasar directamente a archivos con estructura de nombramiento
+                currentMode = "archivos";
+                renderEntregaView();
+            }
+        } 
+        else if (currentMode === "archivos") {
+            searchInput.disabled = true;
+            const empresa = getEmpresaById(currentEmpresaId);
+            if (!empresa) { currentMode = "empresas"; renderEntregaView(); return; }
+            let archivosMostrar = [];
+            // Determinar archivos según si tiene subcarpeta seleccionada o archivos directos
+            if (currentSubcarpetaIndex !== null && empresa.subcarpetas && empresa.subcarpetas[currentSubcarpetaIndex]) {
+                archivosMostrar = empresa.subcarpetas[currentSubcarpetaIndex].archivos || [];
+            } 
+            else if (empresa.archivosDirectos) {
+                archivosMostrar = empresa.archivosDirectos;
+            }
+            else if ((!empresa.subcarpetas || empresa.subcarpetas.length === 0) && !empresa.archivosDirectos) {
+                archivosMostrar = defaultArchivosEstructura;
+            }
+            else {
+                archivosMostrar = defaultArchivosEstructura;
+            }
+            renderArchivosConEstructura(archivosMostrar, container, empresa);
+            let ruta = `${empresa.nombre}`;
+            if (currentSubcarpetaIndex !== null && empresa.subcarpetas && empresa.subcarpetas[currentSubcarpetaIndex]) {
+                ruta += ` / ${empresa.subcarpetas[currentSubcarpetaIndex].nombre}`;
+            } else if (empresa.subcarpetas === null || empresa.subcarpetas?.length === 0) {
+                ruta += ` (Documentación directa - sin subcarpetas)`;
+            } else { ruta += ` / Archivos gestion 2284`; }
+            breadDiv.innerHTML = `<i class="fas fa-file-alt"></i> ${ruta} › Estructura de nombramiento`;
+            volverWrapper.innerHTML = `<button class="btn-volver" id="volverSubcarpetasBtn"><i class="fas fa-arrow-left"></i> Volver ${empresa.subcarpetas && empresa.subcarpetas.length > 0 ? "a subcarpetas" : "a empresas"}</button>`;
+            document.getElementById("volverSubcarpetasBtn")?.addEventListener("click", () => {
+                if (empresa.subcarpetas && empresa.subcarpetas.length > 0) {
+                    currentMode = "subcarpetas";
+                    currentSubcarpetaIndex = null;
+                } else {
+                    currentMode = "empresas";
+                    currentEmpresaId = null;
+                    currentSubcarpetaIndex = null;
+                }
+                renderEntregaView();
+            });
+        }
+    }
+
+    function renderEmpresasList(empresasArray, container) {
+        if(empresasArray.length === 0){
+            container.innerHTML = `<div class="empty-message"><i class="fas fa-store-slash"></i> No se encontraron empresas</div>`;
+            return;
+        }
+        let html = `<div class="carpetas-grid">`;
+        empresasArray.forEach(emp => {
+            let subInfo = "";
+            if (emp.subcarpetas && emp.subcarpetas.length > 0) subInfo = `${emp.subcarpetas.length} subcarpetas`;
+            else if (emp.subcarpetas === null || emp.subcarpetas?.length === 0) subInfo = `Documentación directa (sin subcarpetas)`;
+            else subInfo = `Archivos disponibles`;
+            html += `
+                <div class="carpeta-item" data-id="${emp.id}">
+                    <div class="carpeta-icon"><i class="fas fa-folder"></i></div>
+                    <div class="carpeta-info">
+                        <h3>${escapeHtml(emp.nombre)}</h3>
+                        <p><i class="fas fa-folder-tree"></i> ${subInfo}</p>
+                    </div>
+                </div>
+            `;
+        });
+        html += `</div>`;
+        container.innerHTML = html;
+        document.querySelectorAll('.carpeta-item').forEach(el => {
+            el.addEventListener('click', (e) => {
+                const id = parseInt(el.getAttribute('data-id'));
+                currentEmpresaId = id;
+                const empresa = getEmpresaById(id);
+                // Decidir si tiene subcarpetas reales
+                if (empresa.subcarpetas && empresa.subcarpetas.length > 0) {
+                    currentMode = "subcarpetas";
+                    currentSubcarpetaIndex = null;
+                } else {
+                    // sin subcarpetas: ir directamente a archivos (modo archivos sin subcarpeta)
+                    currentMode = "archivos";
+                    currentSubcarpetaIndex = null;
+                }
+                renderEntregaView();
+            });
+        });
+    }
+
+    function renderSubcarpetasList(empresa, container) {
+        if (!empresa.subcarpetas || empresa.subcarpetas.length === 0) {
+            container.innerHTML = `<div class="empty-message">Esta empresa no tiene subcarpetas, los archivos están disponibles directamente</div>`;
+            return;
+        }
+        let html = `<div class="subcarpeta-list">`;
+        empresa.subcarpetas.forEach((sub, idx) => {
+            html += `
+                <div class="subcarpeta-card" data-idx="${idx}">
+                    <i class="fas fa-folder-open"></i>
+                    <span>📁 ${escapeHtml(sub.nombre)}</span>
+                    <i class="fas fa-chevron-right" style="margin-left:auto;"></i>
+                </div>
+            `;
+        });
+        html += `</div>`;
+        container.innerHTML = html;
+        document.querySelectorAll('.subcarpeta-card').forEach(card => {
+            card.addEventListener('click', (e) => {
+                const idx = parseInt(card.getAttribute('data-idx'));
+                currentSubcarpetaIndex = idx;
+                currentMode = "archivos";
+                renderEntregaView();
+            });
+        });
+    }
+
+    // Tabla que muestra estructura de nombramiento según resolución 2284
+    function renderArchivosConEstructura(archivos, container, empresa) {
+        if (!archivos || archivos.length === 0) {
+            container.innerHTML = `<div class="empty-message"><i class="fas fa-file-exclamation"></i> No se encontraron archivos definidos para esta empresa.<br>La estructura debe seguir la Resolución 2284/2023.</div>`;
+            return;
+        }
+        let html = `<table class="archivos-tabla">
+                        <thead><tr><th>Estructura de nombramiento</th><th>Nombre del archivo (Ejemplo)</th><th>Detalles</th><th></th></tr></thead>
+                        <tbody>`;
+        archivos.forEach(file => {
+            let estructura = file.estructura || "Seguir convenio: [tipo]_2284_[empresa]_[año].ext";
+            html += `<tr>                        
+                        <td><span class="badge-estructura"><i class="fas fa-code-branch"></i> ${escapeHtml(estructura)}</span></td>
+                        <td><i class="fas fa-file-${escapeHtml(file.extension)}" style="color:${escapeHtml(file.color)};"></i> ${escapeHtml(file.nombre)}</td>
+                        <td>${escapeHtml(file.detalles)}</td>
+                        <td><button class="btn-detalle-estructura" data-estructura="${escapeHtml(estructura)}" data-nombre="${escapeHtml(file.nombre)}"><i class="fas fa-info-circle"></i></button></td>
+                     </tr>`;
+        });
+        html += `</tbody></table><div style="margin-top:14px; font-size:0.7rem; background:#f0f6fd; border-radius:18px; padding:8px;"> <b> 3.1. Características de la digitalización o de la exportación de archivos a medios digitales, cuando aplique: </b> <br> 3.1.1. Escala: los documentos deben estar digitalizados en la escala de grises para texto <br> 3.1.2. Resolución de la imagen: digitalización con una resolución de 300 dpi en escala básica de blanco y negro <br> 3.1.3. Tipo archivo: el formato del archivo para digitalizatión debe ser PDF.</div>`;
+        container.innerHTML = html;
+        document.querySelectorAll('.btn-detalle-estructura').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const estructura = btn.getAttribute('data-estructura');
+                const nombre = btn.getAttribute('data-nombre');
+                alert(`📄 Documento: ${nombre}\n📌 Estructura: ${estructura}\nRecomendación: cargar los documentos una vez generada la factura.`);
+            });
+        });
+    }
+
+    // --------------------------------------------------------------
+    // 2. TOPES ASEGURADORAS: Categorías de vehículo (Decreto 2644/2022)
+    // Gastos médicos: Asegurado, Asegurado diferencial, No asegurado
+    // --------------------------------------------------------------
+    function buildTopesCategorias() {
+        // UVT proyecciones: 2025 oficial 47.065 COP, 2026 estimado 49.500 COP
+        const UVT_2025 = 49799;
+        const UVT_2026 = 52374;   // incremento ~5.8%
+        // Topes en UVT según Decreto 2644 (cobertura gastos médicos)
+        const topesBase2025 = { asegurado: 701.68, diferencialS: 263.13, diferencialA:438.55, noAsegurado: 701.68 };
+        const topesBase2026 = { asegurado: 701.68, diferencialS: 263.13, diferencialA:438.55, noAsegurado: 701.68 };
+        
+        // Topes 2024 referencia para flechas en 2025
+        const topes2024 = { asegurado: 701.68, diferencialS: 263.13, diferencialA:438.55, noAsegurado: 701.68 };
+        
+        const formatCOP = (val) => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(val);
+        
+        const generarBloque = (year, topes, uvt, prevTopes = null, mostrarFlechas = true) => {
+            const getFlecha = (val, prevVal) => {
+                if (!mostrarFlechas || prevVal === undefined) return '<i class="fas fa-chart-simple" style="opacity:0.5;"></i>';
+                if (val > prevVal) return '<i class="fas fa-arrow-up" style="color:#2b6e3c;"></i>';
+                if (val < prevVal) return '<i class="fas fa-arrow-down" style="color:#b3442c;"></i>';
+                return '<i class="fas fa-arrow-right" style="color:#e6b422;"></i>';
+            };
+            return `<div class="year-card">
+                        <div class="year-title"><span>${year}</span> <span style="font-size:0.8rem;">UVT = $${uvt.toLocaleString()} COP</span></div>
+                        <table style="width:100%;">
+                            <thead><tr><th>Categoría del vehículo</th><th>Topes (UVT)</th><th>Valor en pesos</th></tr></thead>
+                            <tbody>
+                                <tr><td><strong>Asegurado</strong> (ASEGURADORA)</td><td class="uvt-valor">${topes.asegurado} UVT</td><td class="cop-valor"><strong>${formatCOP(topes.asegurado * uvt)}</strong></td></tr>
+                                <tr><td><strong>Asegurado diferencial</strong> (ASEGURADORA)</td><td class="uvt-valor">${topes.diferencialS} UVT</td><td class="cop-valor"><strong>${formatCOP(topes.diferencialS * uvt)}</strong></td></tr>
+                                <tr><td><strong>Asegurado diferencial</strong> (ADRES)</td><td class="uvt-valor">${topes.diferencialA} UVT</td><td class="cop-valor"><strong>${formatCOP(topes.diferencialA * uvt)}</strong></td></tr>
+                                <tr><td><strong>No asegurado</strong> (ADRES)</td><td class="uvt-valor">${topes.noAsegurado} UVT</td><td class="cop-valor"><strong>${formatCOP(topes.noAsegurado * uvt)}</strong></td></tr>
+                            </tbody>
+                        </table>                        
+                    </div>`;
+        };
+        const html = `<div class="topes-container">
+                        ${generarBloque(2025, topesBase2025, UVT_2025, topes2024, true)}
+                        ${generarBloque(2026, topesBase2026, UVT_2026, topesBase2025, true)}
+                      </div>`;
+        document.getElementById("topesContainer").innerHTML = html;
+    }
+
+    // --------------------------------------------------------------
+    // 3. TIPOS DE DOCUMENTACIÓN COLOMBIA (con botón información)
+    // --------------------------------------------------------------
+    const tiposDocumentos = [
+        { nombre: "Nacido Vivo", formato: "1.234.567.890", longitud:"9 digitos", definicion: "Documento que tiene como propósito primordial recoger información sobre la natalidad y es requisito para la inscripción del nacimiento en las oficinas autorizadas para llevar el registro civil. Debe ser diligenciado por el médico o la enfermera que asistió el parto; en las áreas del país en donde no exista este recurso humano, las auxiliares de enfermería y las promotoras de salud están autorizadas para diligenciarlo. En el evento en que el parto haya sido asistido por partera, ella deberá informar a la promotora de salud del área, para que esta avale lainformación y diligencie el respectivo." },
+        { nombre: "Registro Civil", formato: "00123456789", longitud:"11 digitos", definicion: "Es el documento expedido por la Registraduría Nacional del Estado Civil a través de la delegada del estado civil o una notaría pública con el que se identifican los menores de 7 años. Debe ser reemplazado por la tarjeta de identidad." },
+        { nombre: "Tarjeta de Identidad", formato: "11.234.567.890", longitud:"11 digitos", definicion: "Es el documento expedido por la Registraduría Nacional del Estado Civil con el que se identifican los menores de edad entre 7 y 17 años. Debe ser reemplazado por la cédula de ciudadanía." },
+        { nombre: "Cédula de Ciudadanía", formato: "1.234.567.890", longitud:"10 digitos", definicion: "Es el documento expedido por la Registraduría Nacional del Estado Civil con el que se identifican las personas al cumplir 18 años de edad." },
+        { nombre: "Adulto Sin Identificación", formato: "AB12345678", longitud:"10 digitos", definicion: "Aplica para las personas de 18 años en adelante, afiliados de la Población Especial del Régimen Subsidiado que no están identificados por la Registraduría Nacional del Estado Civil (RNEC) y que se encuentren en el correspondiente listado censal." },
+        { nombre: "Menor Sin Identificación", formato: "AB12345678", longitud:"10 digitos", definicion: "Aplica a las personas menores de 18 años afiliados de la Población Especial del Régimen Subsidiado que no están identificados por la Registraduría Nacional del Estado Civil (RNEC) y que se encuentren en el correspondiente listado censal." },
+        { nombre: "Cédula de Extranjería", formato: "123456", longitud:"6 digitos", definicion: "Es el documento de identificación expedido por Migración Colombia, de acuerdo a lo establecido en el Decreto 1067 de 2015 - artículo 2.2.1.11.4.4.; artículo 2.2.1.11.4.7 o la norma que lo modifique o sustituya." },
+        { nombre: "Pasaporte", formato: "AB1234567890", longitud:"12 digitos", definicion: "Es el documento que acredita la identidad de un extranjero y de los extranjeros menores de 7 años, expedido por las autoridades de su respectivo país de origen, que acredita un permiso o autorización legal para que salga o ingrese del mismo, por los puertos o aeropuertos internacionales." },
+        { nombre: "Carné Diplomático", formato: "123.456.789-0", longitud:"11 digitos", definicion: "Es el documento que identifica a extranjeros que cumplen funciones en las embajadas, legaciones, consulados y delegaciones en representación de gobiernos extranjeros." },
+        { nombre: "Salvoconducto de Permanencia", formato: "AB1234567", longitud:"9 digitos", definicion: "Es el documento de carácter temporal que expide la Unidad Administrativa Especial Migración Colombia al extranjero que así lo requiera. Decreto 1067 de 2015 - artículo 2.2.1.11.4.9 o la norma que lo modifique o sustituya." },
+        { nombre: "Permiso Especial de Permanencia", formato: "123456789012345", longitud:"15 digitos", definicion: "Es el documento de carácter temporal que se otorga únicamente a los nacionales venezolanos de acuerdo con lo establecido en la Resolución 5797 de 2017, Resolución 1272 de 2017 o las normas que la modifiquen o sustituyan." },
+        { nombre: "Documento Extranjero", formato: "AB1234567890123456", longitud:"16 digitos", definicion: "Número de Identificación Tributaria para empresas y personas jurídicas." },
+        { nombre: "NIT", formato: "123.456.789-0", longitud:"9 digitos", definicion: "Número de Identificación Tributaria para empresas y personas jurídicas." },
+        { nombre: "Permiso PPT", formato: "PPT-123456", longitud:"9 digitos", definicion: "Permiso de Protección Temporal para migrantes venezolanos en Colombia." }
+    ];
+    function renderDocumentosGrid() {
+        let html = "";
+        tiposDocumentos.forEach(doc => {
+            html += `<div class="doc-card">
+                        <div class="doc-nombre">${doc.nombre}</div>
+                        <div class="doc-formato"><i class="fas fa-qrcode"></i> ${doc.formato}</div>
+                        <div class="doc-formato">${doc.longitud}</div>
+                        <button class="btn-info" data-def="${escapeHtml(doc.definicion)}" data-name="${doc.nombre}"><i class="fas fa-circle-info"></i> Información</button>
+                    </div>`;
+        });
+        document.getElementById("documentosGrid").innerHTML = html;
+        document.querySelectorAll('.btn-info').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const definicion = btn.getAttribute('data-def');
+                const nombreTipo = btn.getAttribute('data-name');
+                document.getElementById("modalTextoDef").innerHTML = `<strong>${nombreTipo}</strong><br>${definicion}`;
+                document.getElementById("modalDefinicion").style.display = "flex";
+            });
+        });
+    }
+
+    // Helper
+    function escapeHtml(str) { return str.replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+
+    // Tabs + listeners
+    function initTabs() {
+        const btns = document.querySelectorAll('.tab-btn');
+        const panes = document.querySelectorAll('.tab-pane');
+        btns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabId = btn.getAttribute('data-tab');
+                btns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                panes.forEach(p => p.classList.remove('active-pane'));
+                document.getElementById(`${tabId}-pane`).classList.add('active-pane');
+                if (tabId === 'entrega') {
+                    currentMode = "empresas";
+                    currentEmpresaId = null;
+                    currentSubcarpetaIndex = null;
+                    renderEntregaView();
+                }
+                if (tabId === 'topes') buildTopesCategorias();
+                if (tabId === 'documentos') renderDocumentosGrid();
+            });
+        });
+    }
+    // Evento buscador
+    document.getElementById("buscadorEmpresas")?.addEventListener("input", () => { if(currentMode === "empresas") renderEntregaView(); });
+    // Modal
+    document.getElementById("cerrarModalBtn")?.addEventListener("click", () => document.getElementById("modalDefinicion").style.display = "none");
+    window.addEventListener("click", (e) => { const modal = document.getElementById("modalDefinicion"); if(e.target === modal) modal.style.display = "none"; });
+    
+    function init() {
+        initTabs();
+        renderEntregaView();
+        buildTopesCategorias();
+        renderDocumentosGrid();
+    }
+    init();
+</script>
+</body>
+</html>
