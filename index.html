@@ -75,23 +75,23 @@
             background: var(--color-primary-extralight);
             border-bottom: 3px solid var(--color-primary);
         }
-        .tab-content { padding: 22px 18px; background: #ffffff; }
+        .tab-content { padding: 22px 18px; background: var(--color-background); }
         .tab-pane { display: none; animation: fade 0.2s ease; }
         .tab-pane.active-pane { display: block; }
         @keyframes fade { from { opacity: 0; transform: translateY(5px);} to { opacity: 1; transform: translateY(0);} }
 
         /* Búsqueda */
         .search-box { margin-bottom: 20px; position: relative; }
-        .search-box i { position: absolute; left: 15px; top: 14px; color: #7e95a8; }
+        .search-box i { position: absolute; left: 15px; top: 14px; color: var(--color-primary-light); }
         .search-box input {
             width: 100%;
             padding: 12px 12px 12px 42px;
-            border: 1px solid #67A4F5;
+            border: 1px solid var(--color-primary-light);
             border-radius: 48px;
             font-size: 0.9rem;
             background: #fefefe;
         }
-        .search-box input:focus { border-color: #3284F0; outline: none; box-shadow: 0 0 0 2px rgba(12,110,140,0.2); }
+        .search-box input:focus { border-color: var(--color-primary-extralight); outline: none; box-shadow: 0 0 0 2px rgba(12,110,140,0.2); }
 
         /* carpetas empresas */
         .carpetas-grid { display: flex; flex-direction: column; gap: 12px; }
@@ -99,15 +99,15 @@
             display: flex;
             align-items: center;
             gap: 16px;
-            background: #f9fbfd;
+            background: var(--color-background);
             border-radius: 24px;
             padding: 14px 18px;
-            border: 1px solid #e2edf2;
+            border: 1px solid var(--color-surface);
             cursor: pointer;
             transition: 0.15s;
         }
-        .carpeta-item:hover { background: #eff6fc; transform: scale(0.99); border-color: #bdd6e4; }
-        .carpeta-icon { background: #e5eff5; width: 52px; height: 52px; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: #3284F0; }
+        .carpeta-item:hover { background: var(--color-primary-extralight); transform: scale(0.99); border-color: var(--color-primary-light); }
+        .carpeta-icon { background: var(--color-primary-extralight); width: 52px; height: 52px; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: var(--color-primary); }
         .carpeta-info h3 { font-size: 1rem; font-weight: 700; margin-bottom: 4px; color:var(--color-text); }
         .carpeta-info p { font-size: 0.7rem; color:var(--color-text-secondary); }
 
