@@ -163,8 +163,8 @@
             text-align: left;
             vertical-align: top;
         }
-        .tablaASMS thead tr:first-child th { text-align: center; font-weight: 700; color: #1f506a; background: #fafcff; font-size: larger;}
-        .tablaASMS th { font-weight: 700; color: #1f506a; background: #fafcff; text-align: center; }
+        .tablaASMS thead tr:first-child th { text-align: center; font-weight: 700; color: var(--color-primary-dark); background: #fafcff; font-size: larger;}
+        .tablaASMS th { font-weight: 700; color: var(--color-primary-dark); background: #fafcff; text-align: center; }
 
         .badge-estructura { background: #eef2fa; border-radius: 30px; padding: 4px 10px; font-size: 0.7rem; font-family: monospace; display: inline-block; margin: 2px 0; }
         /* Topes aseguradoras nuevos */
@@ -1322,7 +1322,7 @@
             html += `
                 <div class="subcarpeta-card" data-idx="${idx}">
                     <i class="fas fa-folder-open"></i>
-                    <span>📁 ${escapeHtml(sub.nombre)}</span>
+                    <span>${escapeHtml(sub.nombre)}</span>
                     <i class="fas fa-chevron-right" style="margin-left:auto;"></i>
                 </div>
             `;
