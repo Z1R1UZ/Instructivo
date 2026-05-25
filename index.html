@@ -1348,7 +1348,7 @@
                         <td><span class="badge-estructura"><i class="fas fa-code-branch"></i> ${escapeHtml(estructura)}</span></td>
                         <td><i class="fas fa-file-${escapeHtml(file.extension)}" style="color:${escapeHtml(file.color)};"></i> ${escapeHtml(file.nombre)}</td>
                         <td>${escapeHtml(file.detalles)}</td>
-                        <td><button class="btn-detalle-estructura" data-estructura="${escapeHtml(estructura)}" data-nombre="${escapeHtml(file.nombre)} data-descripcion=${escapeHtml(file.descripcion)}"><i class="fas fa-info-circle"></i></button></td>
+                        <td><button class="btn-detalle-estructura" data-estructura="${escapeHtml(estructura)}" data-nombre="${escapeHtml(file.nombre)}" data-descripcion="${escapeHtml(file.descripcion)}"><i class="fas fa-info-circle"></i></button></td>
                      </tr>`;
         });
         html += `</tbody></table><div style="margin-top:14px; font-size:0.7rem; background:#f0f6fd; border-radius:18px; padding:8px;"> <b> 3.1. Características de la digitalización o de la exportación de archivos a medios digitales, cuando aplique: </b> <br> 3.1.1. Escala: los documentos deben estar digitalizados en la escala de grises para texto <br> 3.1.2. Resolución de la imagen: digitalización con una resolución de 300 dpi en escala básica de blanco y negro <br> 3.1.3. Tipo archivo: el formato del archivo para digitalizatión debe ser PDF.</div>`;
@@ -1358,7 +1358,7 @@
                 const estructura = btn.getAttribute('data-estructura');
                 const nombre = btn.getAttribute('data-nombre');
                 const descripcion = btn.getAttribute('data-descripcion');
-                alert(`📄 Documento: ${nombre}\n📌 Estructura: ${estructura}\nDescripción:\n ${descripcion}`);
+                alert(`📄 Documento: ${nombre}\n📌 Estructura: ${estructura}\n Descripción:\n ${descripcion}`);
             });
         });
     }
