@@ -138,23 +138,102 @@
         }
         .breadcrumb { font-size: 0.7rem; background: #f3f7fa; padding: 8px 14px; border-radius: 40px; margin-bottom: 18px; color: var(--color-text-secondary); }
 
-
-        /* liquidacion empresas */
-        .liquidacion-grid { display: flex; flex-direction: column; gap: 12px; }
-        .liquidacion-item {
+        /* liquidacion nuevas pestañas desplegables */
+        .liquidacion-container {
             display: flex;
-            align-items: center;
+            flex-direction: column;
             gap: 16px;
-            background: var(--color-background);
-            border-radius: 24px;
-            padding: 14px 18px;
-            border: 1px solid var(--color-surface);
-            cursor: pointer;
-            transition: 0.15s;
         }
-        .liquidacion-item:hover { background: var(--color-primary-extralight); transform: scale(0.99); border-color: var(--color-primary-light); }
-        .liquidacion-icon { background: var(--color-primary-extralight); width: 52px; height: 52px; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: var(--color-primary); }
-        .liquidacion-info h3 { font-size: 1rem; font-weight: 700; margin-bottom: 4px; color:var(--color-text); }
+        .accordion-item {
+            background: white;
+            border-radius: 24px;
+            border: 1px solid var(--color-surface);
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+        .accordion-header {
+            background: var(--color-primary-extralight);
+            padding: 16px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--color-primary-dark);
+        }
+        .accordion-header i {
+            transition: transform 0.2s;
+        }
+        .accordion-item.active .accordion-header i {
+            transform: rotate(90deg);
+        }
+        .accordion-body {
+            display: none;
+            padding: 20px;
+            background: #ffffff;
+            border-top: 1px solid var(--color-surface);
+        }
+        .accordion-item.active .accordion-body {
+            display: block;
+        }
+        .subaccordion-item {
+            margin-bottom: 16px;
+            border-radius: 20px;
+            border: 1px solid var(--color-primary-light);
+            background: #fefefe;
+        }
+        .subaccordion-header {
+            background: #f8fafc;
+            padding: 12px 18px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: var(--color-text);
+            border-radius: 20px;
+        }
+        .subaccordion-header i {
+            transition: transform 0.2s;
+        }
+        .subaccordion-item.active .subaccordion-header i {
+            transform: rotate(90deg);
+        }
+        .subaccordion-body {
+            display: none;
+            padding: 16px;
+            border-top: 1px solid #eef2f8;
+        }
+        .subaccordion-item.active .subaccordion-body {
+            display: block;
+        }
+        /* tabla 4x5 */
+        .grid-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .grid-table th, .grid-table td {
+            border: 1px solid #e2e8f0;
+            padding: 10px 8px;
+            text-align: center;
+        }
+        .grid-table th {
+            background: var(--color-primary-extralight);
+            color: var(--color-primary-dark);
+            font-weight: 600;
+        }
+        .grid-table td {
+            background: white;
+            color: var(--color-text);
+        }
+        .empty-message { text-align: center; color: #6e8c9e; padding: 30px; }
+        
         
         /* tabla archivos con estructura de nombramiento */
         .archivos-tabla {
@@ -433,22 +512,9 @@
             </div>
         </div>
 
-        <!-- Pestaña Liq. QX -->
+        <!-- Pestaña Liquidación QX con pestañas desplegables nuevas -->
         <div id="liquidacion-pane" class="tab-pane">
-            <div class="liquidacion-grid">
-                <div class="liquidacion-item" data-id="mismo">
-                    <div class="liquidacion-icon"><i class="fas fa-user"></i></div>
-                    <div class="liquidacion-info">
-                        <h3>Unico especialista</h3>
-                    </div>
-                </div>
-                <div class="liquidacion-item" data-id="multiple">
-                    <div class="liquidacion-icon"><i class="fas fa-users"></i></div>
-                    <div class="liquidacion-info">
-                        <h3>Multiple especialista</h3>
-                    </div>
-                </div>
-            </div>            
+            <div class="liquidacion-container" id="liquidacionContainer"></div>
         </div>
     </div>
 </div>
@@ -1483,6 +1549,94 @@
             });
         });
     }
+
+    // --------------------------------------------------------------
+    // 4. LIQUIDACION QX: pestañas desplegables con subpestañas y tablas 4x5
+    // --------------------------------------------------------------
+    function generarTabla4x5(tituloSubtipo) {
+        // crea una tabla de 4 filas x 5 columnas con contenido "celda X,Y"
+        let html = `<table class="grid-table">
+                        <thead><tr>`;
+        for(let col = 1; col <= 5; col++) html += `<th>Columna ${col}</th>`;
+        html += `</tr></thead><tbody>`;
+        for(let fila = 1; fila <= 4; fila++) {
+            html += `<tr>`;
+            for(let col = 1; col <= 5; col++) {
+                html += `<td>${tituloSubtipo} - celda ${fila},${col}</td>`;
+            }
+            html += `</tr>`;
+        }
+        html += `</tbody></table>`;
+        return html;
+    }
+
+    function renderLiquidacionQX() {
+        const container = document.getElementById("liquidacionContainer");
+        // estructura: dos acordeones principales: "Unico especialista" y "Multiples especialistas"
+        const estructura = [
+            {
+                nombre: "Unico especialista",
+                subtipos: [
+                    { nombre: "Bilateral", key: "bilateral" },
+                    { nombre: "Misma Via", key: "mismaViaUnico" },
+                    { nombre: "Diferente Via", key: "difViaUnico" }
+                ]
+            },
+            {
+                nombre: "Multiples especialistas",
+                subtipos: [
+                    { nombre: "Misma Via", key: "mismaViaMulti" },
+                    { nombre: "Diferente Via", key: "difViaMulti" }
+                ]
+            }
+        ];
+        
+        let html = `<div class="liquidacion-container">`;
+        estructura.forEach((item, idx) => {
+            html += `
+                <div class="accordion-item" data-accordion="${idx}">
+                    <div class="accordion-header">
+                        <span><i class="fas fa-stethoscope"></i> ${item.nombre}</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                    <div class="accordion-body">
+            `;
+            item.subtipos.forEach((sub, subIdx) => {
+                const subId = `sub-${idx}-${subIdx}`;
+                html += `
+                    <div class="subaccordion-item" data-subaccordion="${subId}">
+                        <div class="subaccordion-header">
+                            <span><i class="fas fa-microscope"></i> ${sub.nombre}</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="subaccordion-body">
+                            ${generarTabla4x5(`${item.nombre} - ${sub.nombre}`)}
+                        </div>
+                    </div>
+                `;
+            });
+            html += `</div></div>`;
+        });
+        html += `</div>`;
+        container.innerHTML = html;
+        
+        // Agregar listeners a acordeones principales
+        document.querySelectorAll('.accordion-item').forEach(acc => {
+            const header = acc.querySelector('.accordion-header');
+            header.addEventListener('click', (e) => {
+                e.stopPropagation();
+                acc.classList.toggle('active');
+            });
+        });
+        // Listeners a subacordeones
+        document.querySelectorAll('.subaccordion-item').forEach(subAcc => {
+            const subHeader = subAcc.querySelector('.subaccordion-header');
+            subHeader.addEventListener('click', (e) => {
+                e.stopPropagation();
+                subAcc.classList.toggle('active');
+            });
+        });
+    }
     
 
     // Helper
@@ -1507,6 +1661,7 @@
                 }
                 if (tabId === 'topes') buildTopesCategorias();
                 if (tabId === 'documentos') renderDocumentosGrid();
+                if (tabId === 'liquidacion') renderLiquidacionQX();
                 
             });
         });
@@ -1522,6 +1677,7 @@
         renderEntregaView();
         buildTopesCategorias();
         renderDocumentosGrid();
+        renderLiquidacionQX();
     }
     init();
 </script>
