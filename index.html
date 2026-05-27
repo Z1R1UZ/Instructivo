@@ -1619,12 +1619,12 @@
         });
         
         let html = `<table class="grid-table"><thead><tr>`;
-        for(let col = 1; col <= 5; col++) html += `<th>Columna ${col}</th>`;
         html += `</tr></thead><tbody>`;
         for(let i = 0; i < filas.length; i++) {
             html += `<tr>`;
             for(let j = 0; j < filas[i].length; j++) {
-                html += `<td>${escapeHtml(String(filas[i][j]))}</td>`;
+                if(i==0){html += `<th>${escapeHtml(String(filas[i][j]))}</th>`;}
+                else{html += `<td>${escapeHtml(String(filas[i][j]))}</td>`;}                
             }
             html += `</tr>`;
         }
