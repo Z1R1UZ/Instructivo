@@ -516,15 +516,34 @@
         <div id="liquidacion-pane" class="tab-pane">
             <div class="liquidacion-container" id="liquidacionContainer">
                 <div class="liquidacion-container">
-                    <div class="accordion-item" data-accordion="${idx}">
+                    <div class="accordion-item" data-accordion="ME">
                         <div class="accordion-header">
-                            <span><i class="fas fa-stethoscope"></i> ${item.nombre}</span>
+                            <span><i class="fas fa-stethoscope"></i> Mismo especialista</span>
                             <i class="fas fa-chevron-right"></i>
                         </div>
                         <div class="accordion-body">
-                            <div class="subaccordion-item" data-subaccordion="${subId}">
+                            <div class="subaccordion-item" data-subaccordion="UEBI">
                             <div class="subaccordion-header">
-                                <span><i class="fas fa-microscope"></i> ${sub}</span>
+                                <span><i class="fas fa-microscope"></i> Bilateral</span>
+                                <i class="fas fa-chevron-right"></i>
+                            </div>
+                            <div class="subaccordion-body">
+                                <table class="grid-table">
+                                    <thead>
+                                        <tr></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <th></th>
+                                            <td></td>
+                                        </tr>
+                                    </tbody>
+                                </table>                           
+                            </div>
+                        </div>
+                        <div class="subaccordion-item" data-subaccordion="UEMV">
+                            <div class="subaccordion-header">
+                                <span><i class="fas fa-microscope"></i> Misma Via</span>
                                 <i class="fas fa-chevron-right"></i>
                             </div>
                             <div class="subaccordion-body">
