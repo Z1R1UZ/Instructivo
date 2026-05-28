@@ -1598,12 +1598,12 @@
     function generarTablaDesdeArray(datosArray, tituloSubtipo) {
         if (!datosArray || datosArray.length === 0) {
             // Si no hay datos, mostrar tabla vacía con mensaje
-            return `<table class="grid-table"><thead><tr>${Array(5).fill().map((_,i) => `<th>Columna ${i+1}</th>`).join('')}</tr></thead><tbody><tr><td colspan="5">Sin datos configurados para ${tituloSubtipo}</td></tr></tbody></table>`;
+            return `<table class="grid-table"><thead><tr>${Array(6).fill().map((_,i) => `<th>Columna ${i+1}</th>`).join('')}</tr></thead><tbody><tr><td colspan="5">Sin datos configurados para ${tituloSubtipo}</td></tr></tbody></table>`;
         }
         
         let filas = [...datosArray];
-        while(filas.length < 4) {
-            filas.push(Array(5).fill('—'));
+        while(filas.length < 5) {
+            filas.push(Array(6).fill('—'));
         }
         // Asegurar que cada fila tenga 6 columnas
         filas = filas.map(fila => {
