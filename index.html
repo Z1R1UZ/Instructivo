@@ -1600,16 +1600,16 @@
             // Si no hay datos, mostrar tabla vacía con mensaje
             return `<table class="grid-table"><thead><tr>${Array(5).fill().map((_,i) => `<th>Columna ${i+1}</th>`).join('')}</tr></thead><tbody><tr><td colspan="5">Sin datos configurados para ${tituloSubtipo}</td></tr></tbody></table>`;
         }
-        // Asegurar que la tabla tenga al menos 4 filas (para mantener formato 4x5)
+        
         let filas = [...datosArray];
         while(filas.length < 4) {
             filas.push(Array(5).fill('—'));
         }
-        // Asegurar que cada fila tenga 5 columnas
+        // Asegurar que cada fila tenga 6 columnas
         filas = filas.map(fila => {
-            if(fila.length < 5) {
+            if(fila.length < 6) {
                 const nueva = [...fila];
-                while(nueva.length < 5) nueva.push('—');
+                while(nueva.length < 6) nueva.push('—');
                 return nueva;
             }
             return fila.slice(0,5);
@@ -1663,10 +1663,10 @@
                 } else {
                     // Si no hay datos configurados, mostrar datos por defecto editables (ejemplo)
                     datosTabla = [
-                        [`Dato 1,1 - ${sub}`, `Dato 1,2 - ${sub}`, `Dato 1,3 - ${sub}`, `Dato 1,4 - ${sub}`, `Dato 1,5 - ${sub}`],
-                        [`Dato 2,1 - ${sub}`, `Dato 2,2 - ${sub}`, `Dato 2,3 - ${sub}`, `Dato 2,4 - ${sub}`, `Dato 2,5 - ${sub}`],
-                        [`Dato 3,1 - ${sub}`, `Dato 3,2 - ${sub}`, `Dato 3,3 - ${sub}`, `Dato 3,4 - ${sub}`, `Dato 3,5 - ${sub}`],
-                        [`Dato 4,1 - ${sub}`, `Dato 4,2 - ${sub}`, `Dato 4,3 - ${sub}`, `Dato 4,4 - ${sub}`, `Dato 4,5 - ${sub}`]
+                        [`Dato 1,1 - ${sub}`, `Dato 1,2 - ${sub}`, `Dato 1,3 - ${sub}`, `Dato 1,4 - ${sub}`, `Dato 1,5 - ${sub}`, `Dato 1,6 - ${sub}`],
+                        [`Dato 2,1 - ${sub}`, `Dato 2,2 - ${sub}`, `Dato 2,3 - ${sub}`, `Dato 2,4 - ${sub}`, `Dato 2,5 - ${sub}`, `Dato 2,6 - ${sub}`],
+                        [`Dato 3,1 - ${sub}`, `Dato 3,2 - ${sub}`, `Dato 3,3 - ${sub}`, `Dato 3,4 - ${sub}`, `Dato 3,5 - ${sub}`, `Dato 3,6 - ${sub}`],
+                        [`Dato 4,1 - ${sub}`, `Dato 4,2 - ${sub}`, `Dato 4,3 - ${sub}`, `Dato 4,4 - ${sub}`, `Dato 4,5 - ${sub}`, `Dato 4,6 - ${sub}`]
                     ];
                 }
                 const tablaHtml = generarTablaDesdeArray(datosTabla, `${item.nombre} - ${sub}`);
