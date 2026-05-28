@@ -1635,7 +1635,11 @@
     function renderLiquidacionQX() {
         const container = document.getElementById("liquidacionContainer");
                     
-        // Listeners acordeones principales
+        
+        
+    }
+
+    // Listeners acordeones principales
         document.querySelectorAll('.accordion-item').forEach(acc => {
             const header = acc.querySelector('.accordion-header');
             if(header) {
@@ -1645,7 +1649,8 @@
                 });
             }
         });
-        // Listeners subacordeones
+
+    // Listeners subacordeones
         document.querySelectorAll('.subaccordion-item').forEach(subAcc => {
             const subHeader = subAcc.querySelector('.subaccordion-header');
             if(subHeader) {
@@ -1655,7 +1660,6 @@
                 });
             }
         });
-    }
     
 
     // Helper
