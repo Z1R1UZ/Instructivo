@@ -514,7 +514,36 @@
 
         <!-- Pestaña Liquidación QX con pestañas desplegables nuevas -->
         <div id="liquidacion-pane" class="tab-pane">
-            <div class="liquidacion-container" id="liquidacionContainer"></div>
+            <div class="liquidacion-container" id="liquidacionContainer">
+                <div class="liquidacion-container">
+                    <div class="accordion-item" data-accordion="${idx}">
+                        <div class="accordion-header">
+                            <span><i class="fas fa-stethoscope"></i> ${item.nombre}</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div class="accordion-body">
+                            <div class="subaccordion-item" data-subaccordion="${subId}">
+                            <div class="subaccordion-header">
+                                <span><i class="fas fa-microscope"></i> ${sub}</span>
+                                <i class="fas fa-chevron-right"></i>
+                            </div>
+                            <div class="subaccordion-body">
+                                <table class="grid-table">
+                                    <thead>
+                                        <tr></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <th></th>
+                                            <td></td>
+                                        </tr>
+                                    </tbody>
+                                </table>                           
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -1552,143 +1581,12 @@
     // --------------------------------------------------------------
     // Aquí puedes modificar libremente el contenido de cada celda de cada tabla
     // La estructura es: tablaData[categoria][subcategoria] = array 4x5
-    const tablaData = {
-        "Unico especialista": {
-            "Bilateral": [
-                ["N°", "Cirujano", "Anestesiologo", "Ayudantia", "Sala", "Materiales"],
-                ["1", "100%", "100%", "100%", "100%","100%"],
-                ["2", "75%", "75%", "75%", "50%","75%"]
-            ],
-            "Misma Via": [
-                ["N°", "Cirujano", "Anestesiologo", "Ayudantia", "Sala", "Materiales"],
-                ["1", "100%", "100%", "100%", "100%","100%"],
-                ["2", "50%", "50%", "50%", "NO","NO"],
-                ["3", "50%", "50%", "50%", "NO","NO"]
-            ],
-            "Diferente Via": [
-                ["N°", "Cirujano", "Anestesiologo", "Ayudantia", "Sala", "Materiales"],
-                ["1", "100%", "100%", "100%", "100%","100%"],
-                ["2", "75%", "75%", "75%", "50%","75%"],
-                ["3", "75%", "75%", "75%", "50%","75%"]
-            ]
-        },
-        "Multiples especialistas": {
-            "Misma Via": [
-                ["Cirujano","N°", "Cirujano", "Anestesiologo", "Ayudantia", "Sala", "Materiales"],
-                ["A","1", "100%", "100%", "100%", "100%","100%"],
-                ["A","2", "50%", "75%", "NO", "50%","NO"],
-                ["A","3", "75%", "75%", "NO", "50%","NO"],
-                ["B","1", "100%", "75%", "50%", "50%","NO"],
-                ["B","2", "50%", "75%", "NO", "50%","NO"],
-                ["B","3", "75%", "75%", "NO", "50%","NO"]
-            ],
-            "Diferente Via": [
-                ["Cirujano","N°", "Cirujano", "Anestesiologo", "Ayudantia", "Sala", "Materiales"],
-                ["A","1", "100%", "100%", "100%", "100%","100%"],
-                ["A","2", "50%", "75%", "NO", "50%","75%"],
-                ["A","3", "75%", "75%", "NO", "50%","75%"],
-                ["B","1", "100%", "75%", "50%", "50%","75%"],
-                ["B","2", "50%", "75%", "NO", "50%","75%"],
-                ["B","3", "75%", "75%", "NO", "50%","75%"]
-            ]
-        }
-    };
-
-    // Función para generar tabla HTML a partir del array de datos (4x5)
-    function generarTablaDesdeArray(datosArray, tituloSubtipo) {
-        if (!datosArray || datosArray.length === 0) {
-            // Si no hay datos, mostrar tabla vacía con mensaje
-            return `<table class="grid-table"><thead><tr>${Array(6).fill().map((_,i) => `<th>Columna ${i+1}</th>`).join('')}</tr></thead><tbody><tr><td colspan="5">Sin datos configurados para ${tituloSubtipo}</td></tr></tbody></table>`;
-        }
-        
-        let filas = [...datosArray];
-        while(filas.length < 5) {
-            filas.push(Array(6).fill('—'));
-        }
-        // Asegurar que cada fila tenga 6 columnas
-        filas = filas.map(fila => {
-            if(fila.length < 6) {
-                const nueva = [...fila];
-                while(nueva.length < 6) nueva.push('—');
-                return nueva;
-            }
-            return fila.slice(0,5);
-        });
-        
-        let html = `<table class="grid-table"><thead><tr>`;
-        html += `</tr></thead><tbody>`;
-        for(let i = 0; i < filas.length; i++) {
-            html += `<tr>`;
-            for(let j = 0; j < filas[i].length; j++) {
-                if(i==0){html += `<th>${escapeHtml(String(filas[i][j]))}</th>`;}
-                else{html += `<td>${escapeHtml(String(filas[i][j]))}</td>`;}                
-            }
-            html += `</tr>`;
-        }
-        html += `</tbody></table>`;
-        return html;
-    }
+   
 
     function renderLiquidacionQX() {
         const container = document.getElementById("liquidacionContainer");
         
-        const estructura = [
-            { nombre: "Unico especialista", key: "Unico especialista" },
-            { nombre: "Multiples especialistas", key: "Multiples especialistas" }
-        ];
-        
-        const subcategoriasMap = {
-            "Unico especialista": ["Bilateral", "Misma Via", "Diferente Via"],
-            "Multiples especialistas": ["Misma Via", "Diferente Via"]
-        };
-        
-        let html = `<div class="liquidacion-container">`;
-        
-        estructura.forEach((item, idx) => {
-            const categorias = subcategoriasMap[item.key] || [];
-            html += `
-                <div class="accordion-item" data-accordion="${idx}">
-                    <div class="accordion-header">
-                        <span><i class="fas fa-stethoscope"></i> ${item.nombre}</span>
-                        <i class="fas fa-chevron-right"></i>
-                    </div>
-                    <div class="accordion-body">
-            `;
             
-            categorias.forEach((sub, subIdx) => {
-                // Obtener datos del array global
-                let datosTabla = [];
-                if (tablaData[item.key] && tablaData[item.key][sub]) {
-                    datosTabla = tablaData[item.key][sub];
-                } else {
-                    // Si no hay datos configurados, mostrar datos por defecto editables (ejemplo)
-                    datosTabla = [
-                        [`Dato 1,1 - ${sub}`, `Dato 1,2 - ${sub}`, `Dato 1,3 - ${sub}`, `Dato 1,4 - ${sub}`, `Dato 1,5 - ${sub}`, `Dato 1,6 - ${sub}`],
-                        [`Dato 2,1 - ${sub}`, `Dato 2,2 - ${sub}`, `Dato 2,3 - ${sub}`, `Dato 2,4 - ${sub}`, `Dato 2,5 - ${sub}`, `Dato 2,6 - ${sub}`],
-                        [`Dato 3,1 - ${sub}`, `Dato 3,2 - ${sub}`, `Dato 3,3 - ${sub}`, `Dato 3,4 - ${sub}`, `Dato 3,5 - ${sub}`, `Dato 3,6 - ${sub}`],
-                        [`Dato 4,1 - ${sub}`, `Dato 4,2 - ${sub}`, `Dato 4,3 - ${sub}`, `Dato 4,4 - ${sub}`, `Dato 4,5 - ${sub}`, `Dato 4,6 - ${sub}`]
-                    ];
-                }
-                const tablaHtml = generarTablaDesdeArray(datosTabla, `${item.nombre} - ${sub}`);
-                const subId = `sub-${idx}-${subIdx}`;
-                html += `
-                    <div class="subaccordion-item" data-subaccordion="${subId}">
-                        <div class="subaccordion-header">
-                            <span><i class="fas fa-microscope"></i> ${sub}</span>
-                            <i class="fas fa-chevron-right"></i>
-                        </div>
-                        <div class="subaccordion-body">
-                            ${tablaHtml}                            
-                        </div>
-                    </div>
-                `;
-            });
-            html += `</div></div>`;
-        });
-        
-        html += `</div>`;
-        container.innerHTML = html;
-        
         // Listeners acordeones principales
         document.querySelectorAll('.accordion-item').forEach(acc => {
             const header = acc.querySelector('.accordion-header');
