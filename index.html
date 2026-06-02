@@ -1745,7 +1745,7 @@
             const term = searchInput.value.toLowerCase();
             let filtradas = empresasData.filter(emp => emp.nombre.toLowerCase().includes(term));
             renderEmpresasList(filtradas, container);
-            breadDiv.innerHTML = `<i class="fas fa-building"></i> Empresas afiliadas`;
+            breadDiv.innerHTML = `<i class="fas fa-building"></i> Entidades Responsables de Pago`;
             volverWrapper.innerHTML = "";
         } 
         else if (currentMode === "subcarpetas") {
